@@ -1,0 +1,8 @@
+[package]
+name = "wu-api"
+version = "0.0.0"
+authors = ["Lennart Heinrich <lennart@ltheinrich.de>"]
+edition = "2018"
+
+[dependencies]
+wu = { path = "../wu" }

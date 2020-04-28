@@ -1,0 +1,13 @@
+[package]
+name = "wu-web"
+version = "0.0.0"
+authors = ["Lennart Heinrich <lennart@ltheinrich.de>"]
+edition = "2018"
+
+[dependencies]
+wu = { path = "../wu" }
+console_error_panic_hook = "0.1.6"
+wee_alloc = "0.4.5"
+
+[lib]
+crate-type = ["cdylib", "rlib"]

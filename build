@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+  echo "./build api|web|full"
+elif [ $1 == "api" ]; then
+  cross build -p api --release
+elif [ $1 == "web" ]; then
+  wasm-pack build --release --no-typescript -t web -d ../wu-app/pkg wu-web
+elif [ $1 == "full" ]; then
+  rm -rf target/build && mkdir -p target/build
+  ./build api && cp target/x86_64-unknown-linux-musl/release/wu-api target/build/wu-api
+  ./build web && (cd wu-app && tar cfJ ../target/build/wu-app.tar.xz *)
+else
+  echo "./build api|web|full"
+fi

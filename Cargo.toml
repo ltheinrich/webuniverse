@@ -1,0 +1,13 @@
+[workspace]
+members = [
+    "wu",
+    "wu-api",
+    "wu-web",
+]
+
+[profile.release]
+lto = true
+codegen-units = 1
+
+[profile.release.package.wu-web]
+opt-level = "s"
