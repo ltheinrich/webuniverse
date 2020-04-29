@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+</head>
+
+<body>
+    <noscript>Please enable <strong>WebAssembly (Rust)</strong> and <strong>JavaScript</strong></noscript>
+    <script type="module" src="./user.js"></script>
+    <div class="container">
+        <form id="changeform" class="card">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                        <div class="navbar-nav">
+                            <a class="nav-item nav-link active" href="#">Dashboard</a>
+                            <a class="nav-item nav-link" href="./users.html">Users <span
+                                    class="sr-only">(current)</span></a>
+                            <a class="nav-item nav-link" href="#" id="logout">Logout</a>
+                        </div>
+                    </nav>
+                </h6>
+                <div class="form-group row justify-content-md-center">
+                    <label for="username" class="col-sm-2 col-form-label">Username</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="username" disabled placeholder="TODO">
+                    </div>
+                </div>
+                <div class="form-group row justify-content-md-center">
+                    <label for="password" class="col-sm-2 col-form-label">Password</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="password" disabled placeholder="TODO">
+                    </div>
+                </div>
+                <div class="form-group row justify-content-md-center">
+                    <button type="submit" class="btn btn-primary">Change user</button>
+                    &nbsp;
+                    <a href="#" id="deleteuser" class="btn btn-outline-danger">Delete user</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

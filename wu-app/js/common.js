@@ -1,5 +1,5 @@
 import * as config_import from "./config.js";
-import init, * as wasm from "../pkg/etopaw.js";
+import init, * as wasm from "../pkg/wu_web.js";
 
 export function username() {
     return sessionStorage.getItem("username");
@@ -16,7 +16,7 @@ export function login_data() {
 
 export async function require_logout() {
     if (await valid_login()) {
-        location.href = "./index.html";
+        location.href = "./app/";
         return false;
     }
     return true;
@@ -24,7 +24,7 @@ export async function require_logout() {
 
 export async function require_login() {
     if (!(await valid_login())) {
-        location.href = "./login.html";
+        location.href = "../";
         return false;
     }
     return true;
@@ -46,6 +46,21 @@ export async function load(exec = async function (wasm) { }, login = true) {
     let ok;
     if (login) {
         ok = await require_login();
+        if (ok) {
+            const logout = document.getElementById("logout");
+            if (logout != undefined) {
+                logout.addEventListener("click", function () {
+                    api_fetch(async function (json) {
+                        if (json.error != false) {
+                            alert("API error: " + json.error);
+                        } else {
+                            sessionStorage.clear();
+                            location.href = "../";
+                        }
+                    }, "user/logout", login_data());
+                });
+            }
+        }
     } else {
         ok = await require_logout();
     }

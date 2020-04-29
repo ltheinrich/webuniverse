@@ -8,11 +8,9 @@ load(async function (wasm) {
             if ("token" in json) {
                 sessionStorage.setItem("username", username);
                 sessionStorage.setItem("token", json.token);
-                sessionStorage.setItem("storage_key", storage_key);
-                document.getElementById("result").innerText = "Login successful";
-                location.href = "./index.html";
+                location.href = "./app/";
             } else {
-                document.getElementById("result").innerText = json.error;
+                alert("API error: " + json.error);
             }
         }, "user/login", { username, password });
         return false;
