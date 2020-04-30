@@ -16,5 +16,5 @@ load(async function (wasm) {
         } else {
             alert("API error: " + json.error);
         }
-    }, "user/list", login_data());
+    }, "users/list", login_data());
 });

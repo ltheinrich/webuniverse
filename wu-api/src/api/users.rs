@@ -1,4 +1,4 @@
-//! User API handlers
+//! Users API handling
 
 use crate::utils::*;
 use crate::SharedData;
@@ -7,49 +7,13 @@ use std::sync::{Arc, RwLock};
 use wu::crypto::hash;
 use wu::Fail;
 
-/// Token validation handler
-pub fn valid(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>, Fail> {
-    // get values
-    let headers = req.headers();
-    let username = get_username(headers)?;
-    let token = get_str(headers, "token")?;
-
-    // get shared and validate
-    let shared = shared.read().unwrap();
-    Ok(jsonify(
-        object!(valid: shared.user_logins.valid(username, token)),
-    ))
-}
-
-/// Account logout handler
-pub fn logout(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>, Fail> {
-    // get values
-    let headers = req.headers();
-    let username = get_username(headers)?;
-    let token = get_str(headers, "token")?;
-
-    // get shared
-    let mut shared = shared.write().unwrap();
-
-    // verify login
-    if shared.user_logins.valid(username, token) {
-        // delete user token
-        shared.user_logins.remove(username, token);
-
-        // successfully deleted
-        Ok(jsonify(object!(error: false)))
-    } else {
-        // wrong login token
-        Fail::from("unauthenticated")
-    }
-}
-
-/// Account deletion handler
+/// User deletion handler
 pub fn delete(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>, Fail> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
     let token = get_str(headers, "token")?;
+    let user = get_an(headers, "user")?;
 
     // get shared
     let mut shared = shared.write().unwrap();
@@ -57,9 +21,10 @@ pub fn delete(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u
     // verify login
     if shared.user_logins.valid(username, token) {
         // delete user
-        shared.user_data.cache_mut().remove(username);
+        let users = shared.user_data.cache_mut();
+        users.remove(user);
         shared.user_data.write()?;
-        shared.user_logins.remove_user(username);
+        shared.user_logins.remove_user(user);
 
         // successfully deleted
         Ok(jsonify(object!(error: false)))
@@ -69,38 +34,68 @@ pub fn delete(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u
     }
 }
 
-/// Login handler
-pub fn login(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>, Fail> {
+/// Account creation handler
+pub fn create(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>, Fail> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
+    let token = get_str(headers, "token")?;
+    let user = get_an(headers, "user")?;
     let password = get_str(headers, "password")?;
 
     // get shared
     let mut shared = shared.write().unwrap();
 
-    // get password hash from db
-    match shared.user_data.cache().get(username) {
-        Some(password_hash) => {
-            // verify password hash
-            if password_hash != &hash(password) {
-                return Fail::from("unauthenticated");
-            }
+    // verify login
+    if shared.user_logins.valid(username, token) {
+        // cache mut
+        let users = shared.user_data.cache_mut();
 
-            // return login token
-            Ok(jsonify(object!(token: shared.user_logins.add(username))))
+        // check if user already exists
+        if users.contains_key(user) {
+            return Fail::from("username already exists");
         }
-        None => Fail::from("unauthenticated"),
+
+        // create user
+        users.insert(user.to_string(), hash(password));
+        shared.user_data.write()?;
+
+        // return success
+        Ok(jsonify(object!(error: false)))
+    } else {
+        Fail::from("unauthenticated")
     }
 }
 
-/// Update user handler
-pub fn update(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>, Fail> {
+/// Account list handler
+pub fn list(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>, Fail> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
     let token = get_str(headers, "token")?;
-    let new_password = get_str(headers, "new_password")?;
+
+    // get shared
+    let shared = shared.read().unwrap();
+    let users = shared.user_data.cache();
+
+    // verify login
+    if shared.user_logins.valid(username, token) {
+        // return success
+        let users: Vec<&str> = users.keys().map(|n| n.as_str()).collect();
+        Ok(jsonify(object!(users: users)))
+    } else {
+        Fail::from("unauthenticated")
+    }
+}
+
+/// Change user handler
+pub fn change(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>, Fail> {
+    // get values
+    let headers = req.headers();
+    let username = get_username(headers)?;
+    let token = get_str(headers, "token")?;
+    let user = get_str(headers, "user")?;
+    let password = get_str(headers, "password")?;
     let new_username = get_an(headers, "new_username");
 
     // get shared
@@ -109,12 +104,12 @@ pub fn update(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u
     // verify login
     if shared.user_logins.valid(username, token) {
         // change password
-        if let Some(user_password) = shared.user_data.cache_mut().get_mut(username) {
+        if let Some(user_password) = shared.user_data.cache_mut().get_mut(user) {
             // hash and change password
-            *user_password = hash(new_password);
+            *user_password = hash(password);
             shared.user_data.write()?;
         } else {
-            return Fail::from("internal error: user entry does not exist in cache");
+            return Fail::from("user does not exist");
         }
 
         // change username
@@ -129,13 +124,11 @@ pub fn update(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u
 
             // rename user
             let password_hash = users
-                .remove(username)
-                .ok_or_else(|| Fail::new("internal error: user entry does not exist in cache"))?;
+                .remove(user)
+                .ok_or_else(|| Fail::new("user does not exist"))?;
             users.insert(new_username.to_string(), password_hash);
             shared.user_data.write()?;
-            shared
-                .user_logins
-                .rename(username, new_username.to_string());
+            shared.user_logins.rename(user, new_username.to_string());
         }
 
         // return success

@@ -92,3 +92,10 @@ export async function raw_fetch(exec = async function (resp = new Response()) { 
 }
 
 export const config = config_import;
+
+new Vue({
+    el: "#vue",
+    data: {
+        username: username()
+    }
+});

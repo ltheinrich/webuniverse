@@ -1,7 +1,7 @@
 //! Cryptography utils
 
 pub use hex::{decode as hex_decode, encode as hex_encode};
-
+use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use sha3::{Digest, Sha3_256};
 
 /// Generate password hash for API usage -> sha3-256(webuniverse + sha3-256(username + sha3-256(password))
@@ -33,8 +33,6 @@ pub fn hash(plaintext: impl AsRef<[u8]>) -> String {
     hasher.input(plaintext);
     hex_encode(hasher.result())
 }
-
-use rand::{distributions::Alphanumeric, thread_rng, Rng};
 
 /// Generate random vector
 pub fn random(size: usize) -> Vec<u8> {

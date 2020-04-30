@@ -17,7 +17,7 @@ load(async function (wasm) {
             } else {
                 alert("API error: " + json.error);
             }
-        }, "user/create", { user_username: username, user_password: password_hash, ...login_data() });
+        }, "users/create", { user: username, password: password_hash, ...login_data() });
         return false;
     };
 });

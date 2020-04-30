@@ -6,21 +6,21 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
     <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../js/vue.min.js"></script>
 </head>
 
 <body>
     <noscript>Please enable <strong>WebAssembly (Rust)</strong> and <strong>JavaScript</strong></noscript>
     <script type="module" src="./create_user.js"></script>
-    <div class="container">
+    <div id="vue" class="container">
         <form id="createform" class="card">
             <div class="card-body">
                 <h6 class="card-title">
                     <nav class="navbar navbar-expand-lg navbar-light bg-light">
                         <div class="navbar-nav">
-                            <a class="nav-item nav-link active" href="#">Dashboard</a>
-                            <a class="nav-item nav-link" href="./users.html">Users <span
-                                    class="sr-only">(current)</span></a>
-                            <a class="nav-item nav-link" href="#" id="logout">Logout</a>
+                            <a class="nav-item nav-link" href="./">Dashboard</a>
+                            <a class="nav-item nav-link active" href="./users.html">Users </a>
+                            <a class="nav-item nav-link" href="#" id="logout">Logout ({{ username }})</a>
                         </div>
                     </nav>
                 </h6>

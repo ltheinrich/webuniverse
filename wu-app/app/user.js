@@ -1,4 +1,4 @@
-import { load, api_fetch, login_data } from "../js/common.js";
+import { load, api_fetch, login_data, username } from "../js/common.js";
 
 load(async function (wasm) {
     const get_params = new URLSearchParams(window.location.search);
@@ -12,12 +12,34 @@ load(async function (wasm) {
         if (confirm("Delete user?")) {
             api_fetch(async function (json) {
                 if (json.error == false) {
-                    alert("User successfuly deleted");
+                    alert("User successfully deleted");
                     location.href = "./users.html";
                 } else {
                     alert("API error: " + json.error);
                 }
-            }, "user/delete_user", { user_username: user, ...login_data() });
+            }, "users/delete", { user: user, ...login_data() });
         }
     });
+    document.getElementById("changeform").onsubmit = function () {
+        const new_username = document.getElementById("new_username");
+        const new_password = document.getElementById("new_password");
+        if (new_username.value == "" && new_password.value == "") {
+            return alert("Username and password empty") == true;
+        } else if (new_password.value == "") {
+            return alert("Password must be changed when changing the username") == true;
+        }
+        const new_password_hash = wasm.hash_password(new_password.value, new_username.value != "" ? new_username.value : user);
+        api_fetch(async function (json) {
+            if (json.error == false) {
+                if (user == username()) {
+                    sessionStorage.setItem("username", new_username.value);
+                }
+                alert("User successfully changed");
+                location.href = "./users.html";
+            } else {
+                alert("API error: " + json.error);
+            }
+        }, "users/change", new_username.value != "" && new_password.value != "" ? { new_username: new_username.value, password: new_password_hash, user, ...login_data() } : { password: new_password_hash, user, ...login_data() });
+        return false;
+    };
 });
