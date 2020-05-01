@@ -15,7 +15,10 @@ String S, Integer I, Boolean B
 Options:
   --port    I       Port (4490)
   --addr    S       IP address ([::])
-  --threads I       Number of threads to start (2)";
+  --threads I       Number of threads to start (2)
+  --data    S       Data directory (data)
+  --cert    S       Path to TLS certificate (DATA_DIR/cert.pem)
+  --key     S       Path to TLS certificate key (DATA_DIR/key.pem)";
 
 /// Cargo.toml
 pub const CARGO_TOML: &str = include_str!("../Cargo.toml");

@@ -113,22 +113,29 @@ pub fn change(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u
         }
 
         // change username
-        if let Ok(new_username) = new_username {
-            // borrow users mutably
-            let users = shared.user_data.cache_mut();
+        match new_username {
+            Ok(new_username) => {
+                // borrow users mutably
+                let users = shared.user_data.cache_mut();
 
-            // check if user already exists
-            if users.contains_key(new_username) {
-                return Fail::from("new username already exists");
+                // check if user already exists
+                if users.contains_key(new_username) {
+                    return Fail::from("new username already exists");
+                }
+
+                // rename user
+                let password_hash = users
+                    .remove(user)
+                    .ok_or_else(|| Fail::new("user does not exist"))?;
+                users.insert(new_username.to_string(), password_hash);
+                shared.user_data.write()?;
+                shared.user_logins.rename(user, new_username.to_string());
             }
-
-            // rename user
-            let password_hash = users
-                .remove(user)
-                .ok_or_else(|| Fail::new("user does not exist"))?;
-            users.insert(new_username.to_string(), password_hash);
-            shared.user_data.write()?;
-            shared.user_logins.rename(user, new_username.to_string());
+            Err(err) => {
+                if err.err_msg() == "new_username is not alphanumeric" {
+                    return Err(err);
+                }
+            }
         }
 
         // return success

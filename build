@@ -3,7 +3,7 @@
 if [ "$#" -ne 1 ]; then
   echo "./build api|web|full"
 elif [ $1 == "api" ]; then
-  cross build -p api --release
+  cross build -p wu-api --release --target x86_64-unknown-linux-musl && strip target/x86_64-unknown-linux-musl/release/wu-api target/build/wu-api
 elif [ $1 == "web" ]; then
   wasm-pack build --release --no-typescript -t web -d ../wu-app/pkg wu-web
 elif [ $1 == "full" ]; then

@@ -1,4 +1,4 @@
-import * as config_import from "./config.js";
+import * as config_import from "../config.js";
 import init, * as wasm from "../pkg/wu_web.js";
 
 export function username() {
