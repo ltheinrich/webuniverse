@@ -96,6 +96,7 @@ export const config = config_import;
 new Vue({
     el: "#vue",
     data: {
-        username: username()
+        username: username(),
+        title: config.TITLE,
     }
 });

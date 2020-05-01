@@ -1,4 +1,4 @@
-import { load, api_fetch } from "./common.js";
+import { load, api_fetch } from "./js/common.js";
 
 load(async function (wasm) {
     document.getElementById("loginform").onsubmit = function () {

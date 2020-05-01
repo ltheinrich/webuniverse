@@ -6,19 +6,23 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
     <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/custom.css">
     <script src="./js/vue.min.js"></script>
 </head>
 
 <body>
     <noscript>Please enable <strong>WebAssembly (Rust)</strong> and <strong>JavaScript</strong></noscript>
-    <script type="module" src="./js/index.js"></script>
+    <script type="module" src="./index.js"></script>
     <div id="vue" class="container">
+        <div class="row justify-content-md-center">
+            <img class="header-banner" src="css/header.png" width="962" height="205">
+        </div>
         <form id="loginform" class="card">
             <div class="card-body">
                 <h5 class="card-title">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href=".">Webuniverse</a></li>
+                            <li class="breadcrumb-item"><a href=".">{{ title }}</a></li>
                             <li class="breadcrumb-item active">Login</li>
                         </ol>
                     </nav>
@@ -40,6 +44,9 @@
                 </div>
             </div>
         </form>
+        <div class="copyright"><small class="form-text text-muted"><a href="https://ltheinrich.de">Webuniverse
+                    &copy;
+                    2020 Lennart Heinrich</a></small></div>
     </div>
 </body>
 
