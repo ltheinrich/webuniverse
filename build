@@ -1,15 +1,18 @@
 #!/bin/bash
 
 if [ "$#" -ne 1 ]; then
-  echo "./build api|web|full"
+  echo "./build api|client|web|full"
 elif [ $1 == "api" ]; then
-  cross build -p wu-api --release --target x86_64-unknown-linux-musl && strip target/x86_64-unknown-linux-musl/release/wu-api target/build/wu-api
+  cross build -p wu-api --release --target x86_64-unknown-linux-musl && strip target/x86_64-unknown-linux-musl/release/wu-api
+elif [ $1 == "client" ]; then
+  cross build -p wu-client --release --target x86_64-unknown-linux-musl && strip target/x86_64-unknown-linux-musl/release/wu-client
 elif [ $1 == "web" ]; then
   wasm-pack build --release --no-typescript -t web -d ../wu-app/pkg wu-web
 elif [ $1 == "full" ]; then
   rm -rf target/build && mkdir -p target/build
   ./build api && cp target/x86_64-unknown-linux-musl/release/wu-api target/build/wu-api
+  ./build client && cp target/x86_64-unknown-linux-musl/release/wu-client target/build/wu-client
   ./build web && (cd wu-app && tar cfJ ../target/build/wu-app.tar.xz *)
 else
-  echo "./build api|web|full"
+  echo "./build api|client|web|full"
 fi

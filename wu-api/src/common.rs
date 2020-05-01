@@ -10,15 +10,18 @@ use wu::crypto::random_an;
 /// Help output
 pub const HELP: &str = "
 Usage: wu-api [OPTIONS]
-String S, Integer I, Boolean B
+String S, Integer I, Boolean B (+Length)
 
 Options:
-  --port    I       Port (4490)
-  --addr    S       IP address ([::])
-  --threads I       Number of threads to start (2)
-  --data    S       Data directory (data)
-  --cert    S       Path to TLS certificate (DATA_DIR/cert.pem)
-  --key     S       Path to TLS certificate key (DATA_DIR/key.pem)";
+  --port       I       Port (4490)
+  --addr       S       IP address ([::])
+  --api-port   I       API Port (PORT + 9)
+  --api-addr   S       API IP address (ADDR)
+  --api-key    S+32    API key (RANDOM)
+  --threads    I       Number of threads to start (2)
+  --data       S       Data directory (data)
+  --cert       S       Path to TLS certificate (DATA_DIR/cert.pem)
+  --key        S       Path to TLS certificate key (DATA_DIR/key.pem)";
 
 /// Cargo.toml
 pub const CARGO_TOML: &str = include_str!("../Cargo.toml");

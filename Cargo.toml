@@ -3,6 +3,7 @@ members = [
     "wu",
     "wu-api",
     "wu-web",
+    "wu-client",
 ]
 
 [profile.release]

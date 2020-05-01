@@ -1,13 +1,16 @@
 //! Webuniverse API
+#![cfg(target_os = "linux")]
 
 #[macro_use]
 extern crate json;
 
 mod api;
+mod client_api;
 mod common;
 mod data;
 mod utils;
 
+use client_api::listen_clients;
 pub use common::*;
 use data::StorageFile;
 use lhi::server::{listen, load_certificate, HttpRequest, HttpSettings};
@@ -15,6 +18,7 @@ use std::env::args;
 use std::fs::create_dir;
 use std::sync::{Arc, RwLock};
 use utils::json_error;
+use wu::crypto::random_an;
 use wu::{
     meta::{init_name, init_version},
     Command, Fail,
@@ -36,8 +40,11 @@ fn main() {
     }
 
     // configuration
-    let port = cmd.param("port", "4490");
+    let port = cmd.parameter("port", 4490);
     let addr = cmd.param("addr", "[::]");
+    let api_port = cmd.parameter("api-port", port + 9);
+    let api_addr = cmd.param("api-addr", addr);
+    let api_key = cmd.parameter("api-key", random_an(32));
     let threads = cmd.parameter("threads", 2);
     let data = cmd.parameter("data", "data".to_string());
     let cert = cmd.parameter("cert", format!("{}/cert.pem", &data));
@@ -49,7 +56,7 @@ fn main() {
 
     // start HTTPS server
     let tls_config = load_certificate(&cert, &key).unwrap();
-    let listeners = listen(
+    let _listeners = listen(
         &format!("{}:{}", addr, port),
         threads,
         HttpSettings::new(),
@@ -59,11 +66,11 @@ fn main() {
     )
     .unwrap();
 
-    // print info message and join threads
+    // print info message
     println!("HTTPS server available on {}:{}", addr, port);
-    for listener in listeners {
-        listener.join().expect("listener thread crashed");
-    }
+
+    // client api
+    listen_clients(&format!("{}:{}", api_addr, api_port), &api_key).unwrap();
 }
 
 /// Assigning requests to handlers
