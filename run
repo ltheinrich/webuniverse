@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if [ "$#" -ne 1 ]; then
+if [ "$#" -eq 0 ]; then
   echo "./run api|client|web"
 elif [ $1 == "api" ]; then
-  cargo run -p wu-api
+  cargo run -p wu-$@
 elif [ $1 == "client" ]; then
-  cargo run -p wu-client
+  cargo run -p wu-$@
 elif [ $1 == "web" ]; then
   wasm-pack build --dev --no-typescript -t web -d ../wu-app/pkg wu-web
 else
