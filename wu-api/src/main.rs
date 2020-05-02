@@ -52,7 +52,10 @@ fn main() {
 
     // open users database
     create_dir(&data).ok();
-    let user_data = StorageFile::new(&format!("{}/user_data.wdb", &data)).unwrap();
+    let user_data = StorageFile::new(&format!("{}/users.wdb", &data)).unwrap();
+
+    // shared data
+    let shared = Arc::new(RwLock::new(SharedData::new(user_data, data)));
 
     // start HTTPS server
     let tls_config = load_certificate(&cert, &key).unwrap();
@@ -62,7 +65,7 @@ fn main() {
         HttpSettings::new(),
         tls_config,
         handle,
-        Arc::new(RwLock::new(SharedData::new(user_data, data))),
+        shared.clone(),
     )
     .unwrap();
 
@@ -70,7 +73,7 @@ fn main() {
     println!("HTTPS server available on {}:{}", addr, port);
 
     // client api
-    listen_clients(&format!("{}:{}", api_addr, api_port), &api_key).unwrap();
+    listen_clients(&format!("{}:{}", api_addr, api_port), &api_key, shared).unwrap();
 }
 
 /// Assigning requests to handlers
@@ -94,7 +97,7 @@ fn handle(
     };
 
     // handle request
-    Ok(match handler(req, shared) {
+    Ok(match handler(req, shared.read().unwrap()) {
         Ok(resp) => resp,
         Err(err) => json_error(err),
     })

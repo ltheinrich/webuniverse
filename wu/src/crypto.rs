@@ -66,6 +66,7 @@ pub fn init_aead(key: impl AsRef<[u8]>) -> Aes256Gcm {
     Aes256Gcm::new(key)
 }
 
+/// AES256-GCM encryption/decryption
 pub struct Crypter<'a> {
     aead: &'a Aes256Gcm,
     nonce: AesNonce,
@@ -92,5 +93,10 @@ impl<'a> Crypter<'a> {
         self.aead
             .decrypt(&self.nonce, data.as_ref())
             .or_else(|err| Fail::from(format!("failed to decrypt: {:?}", err)))
+    }
+
+    /// Get AEAD
+    pub fn aead(&self) -> &Aes256Gcm {
+        self.aead
     }
 }

@@ -34,8 +34,9 @@ fn main() {
     }
 
     // configuration
-    let port = cmd.param("port", "4499");
-    let addr = cmd.param("addr", "[::1]");
+    let _addr = cmd.param("addr", "[::]:0");
+    let api_port = cmd.param("api-port", "4499");
+    let api_addr = cmd.param("api-addr", "[::1]");
     let api_key = cmd.parameter("api-key", random_an(32));
 
     let mut process = Process::new(cmd.arg(0, ""))
@@ -48,12 +49,13 @@ fn main() {
         .stderr(Stdio::piped())
         .spawn()
         .unwrap();
-    let stdout = process.stdout.as_mut().unwrap();
 
-    let stream = TcpStream::connect(format!("{}:{}", addr, port)).unwrap();
+    let stream = TcpStream::connect(format!("{}:{}", api_addr, api_port)).unwrap();
     let aead = init_aead(api_key);
-    let mut conn = ConnBuilder::new(stream, &aead).init().unwrap();
+    let mut conn = ConnBuilder::from(stream, &aead).init().unwrap();
+    conn.write(b"lennart").unwrap();
 
+    let stdout = process.stdout.as_mut().unwrap();
     let mut br = BufReader::new(stdout);
     loop {
         let mut buf = Vec::new();

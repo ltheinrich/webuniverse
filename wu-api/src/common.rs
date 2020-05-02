@@ -2,10 +2,11 @@
 
 pub use crate::utils::*;
 
+use crate::api::logins::UserLogins;
+use crate::client_api::server::Server;
 use crate::data::StorageFile;
 use std::collections::BTreeMap;
-use std::time::{Duration, SystemTime};
-use wu::crypto::random_an;
+use std::sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard};
 
 /// Help output
 pub const HELP: &str = "
@@ -27,111 +28,57 @@ Options:
 pub const CARGO_TOML: &str = include_str!("../Cargo.toml");
 
 /// Data shared between handlers
-#[derive(Debug)]
 pub struct SharedData {
-  pub user_data: StorageFile,
-  pub user_logins: UserLogins,
-  pub data_dir: String,
+  users: RwLock<StorageFile>,
+  logins: RwLock<UserLogins>,
+  data_dir: RwLock<String>,
+  servers: Arc<RwLock<BTreeMap<String, Server>>>,
 }
 
 impl SharedData {
   /// Default SharedData
-  pub fn new(user_data: StorageFile, data_dir: String) -> Self {
+  pub fn new(users: StorageFile, data_dir: String) -> Self {
     // return default with provided user data
     Self {
-      user_data,
-      user_logins: UserLogins::new(),
-      data_dir,
-    }
-  }
-}
-
-/// Seconds a login token is valid
-const VALID_LOGIN_SECS: u64 = 3600;
-
-/// User login/token management
-#[derive(Clone, Debug, Default)]
-pub struct UserLogins {
-  user_logins: BTreeMap<String, Vec<(String, SystemTime)>>,
-}
-
-impl UserLogins {
-  /// Create empty
-  pub fn new() -> Self {
-    Self {
-      user_logins: BTreeMap::new(),
+      users: RwLock::new(users),
+      logins: RwLock::new(UserLogins::new()),
+      data_dir: RwLock::new(data_dir),
+      servers: Arc::new(RwLock::new(BTreeMap::new())),
     }
   }
 
-  /// Check if login token is valid and remove expired
-  pub fn valid(&self, user: &str, token: &str) -> bool {
-    // get logins
-    match self.user_logins.get(user) {
-      Some(logins) => {
-        // check login
-        logins
-          .iter()
-          .any(|login| login.0 == token && Self::check_unexpired(&login.1))
-      }
-      None => false,
-    }
+  /// Users database read-only
+  pub fn users(&self) -> RwLockReadGuard<'_, StorageFile> {
+    self.users.read().unwrap()
   }
 
-  /// Generate login token for user
-  pub fn add(&mut self, user: &str) -> &str {
-    // generate random token and get logins
-    let token = random_an(32);
-    match self.user_logins.get_mut(user) {
-      Some(logins) => {
-        // remove expired logins and return logins
-        Self::remove_expired(logins);
-        logins.push((token, SystemTime::now()));
-      }
-      None => {
-        // create new logins vector for user
-        self
-          .user_logins
-          .insert(user.to_string(), [(token, SystemTime::now())].to_vec());
-      }
-    };
-
-    // return token
-    &self.user_logins[user].last().unwrap().0
+  /// Users database writeable
+  pub fn users_mut(&self) -> RwLockWriteGuard<'_, StorageFile> {
+    self.users.write().unwrap()
   }
 
-  /// Remove login token for user
-  pub fn remove(&mut self, user: &str, token: &str) {
-    // get logins
-    if let Some(logins) = self.user_logins.get_mut(user) {
-      // remove token
-      logins.retain(|login| login.0 != token && Self::check_unexpired(&login.1));
-    }
+  /// User logins read-only
+  pub fn logins(&self) -> RwLockReadGuard<'_, UserLogins> {
+    self.logins.read().unwrap()
   }
 
-  /// Remove all logins for user
-  pub fn remove_user(&mut self, user: &str) {
-    // remove user
-    self.user_logins.remove(user);
+  /// User logins writeable
+  pub fn logins_mut(&self) -> RwLockWriteGuard<'_, UserLogins> {
+    self.logins.write().unwrap()
   }
 
-  /// Rename user entry
-  pub fn rename(&mut self, user: &str, new_user: String) {
-    if let Some(logins) = self.user_logins.remove(user) {
-      self.user_logins.insert(new_user, logins);
-    }
+  /// Data directory read-only
+  pub fn data_dir(&self) -> RwLockReadGuard<'_, String> {
+    self.data_dir.read().unwrap()
   }
 
-  /// Remove expired logins
-  fn remove_expired(logins: &mut Vec<(String, SystemTime)>) {
-    (*logins).retain(|login| Self::check_unexpired(&login.1));
+  /// Servers map read-only
+  pub fn servers(&self) -> RwLockReadGuard<'_, BTreeMap<String, Server>> {
+    self.servers.read().unwrap()
   }
 
-  /// Check if login is expired
-  fn check_unexpired(expiration: &SystemTime) -> bool {
-    expiration
-      .elapsed()
-      .unwrap_or(Duration::from_secs(u64::max_value()))
-      .as_secs()
-      < VALID_LOGIN_SECS
+  /// Servers map writeable
+  pub fn servers_mut(&self) -> RwLockWriteGuard<'_, BTreeMap<String, Server>> {
+    self.servers.write().unwrap()
   }
 }
