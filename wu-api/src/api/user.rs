@@ -92,8 +92,8 @@ pub fn update(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
     let headers = req.headers();
     let username = get_username(headers)?;
     let token = get_str(headers, "token")?;
-    let new_password = get_str(headers, "new_password")?;
-    let new_username = get_an(headers, "new_username");
+    let new_password = get_str(headers, "newpassword")?;
+    let new_username = get_an(headers, "newusername");
 
     // verify login
     if shared.logins().valid(username, token) {

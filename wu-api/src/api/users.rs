@@ -71,9 +71,11 @@ pub fn list(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result
 
     // verify login
     if shared.logins().valid(username, token) {
-        // return success
+        // get users list
         let user_data = shared.users();
         let users: Vec<&str> = user_data.cache().keys().map(|n| n.as_str()).collect();
+
+        // return users
         Ok(jsonify(object!(users: users)))
     } else {
         Fail::from("unauthenticated")
@@ -88,7 +90,7 @@ pub fn change(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
     let token = get_str(headers, "token")?;
     let user = get_str(headers, "user")?;
     let password = get_str(headers, "password")?;
-    let new_username = get_an(headers, "new_username");
+    let new_username = get_an(headers, "newusername");
 
     // verify login
     if shared.logins().valid(username, token) {
@@ -123,7 +125,7 @@ pub fn change(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
                 shared.logins_mut().rename(user, new_username.to_string());
             }
             Err(err) => {
-                if err.err_msg() == "new_username is not alphanumeric" {
+                if err.err_msg() == "newusername is not alphanumeric" {
                     return Err(err);
                 }
             }

@@ -1,8 +1,9 @@
 //! Server management
 
-use crossbeam_channel::{unbounded, Receiver, Sender};
+use std::convert::TryInto;
 use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
-use wu::net::Connection;
+use wu::crypto::Aes256Gcm;
+use wu::net::{ConnBuilder, Connection};
 use wu::Fail;
 
 /// Server builder
@@ -17,16 +18,15 @@ impl<'a> ServerBuilder<'a> {
     }
 
     /// Build server and manager
-    pub fn build(self) -> (Server, Manager<'a>) {
-        let (tx, rx) = unbounded();
+    pub fn build(mut self) -> (Server, Manager<'a>) {
+        let port = u16::from_be_bytes(self.conn.read().unwrap().as_slice().try_into().unwrap());
         let server = Server {
             data: RwLock::new(String::new()),
-            tx,
+            addr: format!("{}:{}", self.conn.stream_ip(), port),
+            aead: self.conn.crypter_aead().clone(),
         };
-        let manager = Manager {
-            conn: self.conn,
-            rx,
-        };
+
+        let manager = Manager { conn: self.conn };
         (server, manager)
     }
 }
@@ -34,7 +34,8 @@ impl<'a> ServerBuilder<'a> {
 /// Server representation
 pub struct Server {
     data: RwLock<String>,
-    tx: Sender<String>,
+    addr: String,
+    aead: Aes256Gcm,
 }
 
 impl Server {
@@ -50,24 +51,19 @@ impl Server {
 
     /// Send command to server
     pub fn cmd(&self, cmd: String) -> Result<(), Fail> {
-        self.tx.send(cmd).or_else(Fail::from)
+        let mut conn = ConnBuilder::new(&self.addr, &self.aead)?.init()?;
+        conn.write(cmd)
     }
 }
 
 /// Server manager
 pub struct Manager<'a> {
     conn: Connection<'a>,
-    rx: Receiver<String>,
 }
 
 impl<'a> Manager<'a> {
     /// Connection to server
     pub fn conn(&mut self) -> &mut Connection<'a> {
         &mut self.conn
-    }
-
-    /// Command receiver
-    pub fn recv(&self) -> Result<String, Fail> {
-        self.rx.recv().or_else(Fail::from)
     }
 }

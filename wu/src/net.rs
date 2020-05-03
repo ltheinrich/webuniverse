@@ -93,4 +93,14 @@ impl<'a> Connection<'a> {
         // decrypt data and return
         self.crypt.decrypt(buf)
     }
+
+    /// Get IP address of TcpStream
+    pub fn stream_ip(&self) -> String {
+        self.stream.peer_addr().unwrap().ip().to_string()
+    }
+
+    /// Get Crypter AEAD
+    pub fn crypter_aead(&self) -> &Aes256Gcm {
+        self.crypt.aead()
+    }
 }

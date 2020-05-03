@@ -1,4 +1,4 @@
-//! User logins
+//! User logins (internal)
 
 pub use crate::common::*;
 

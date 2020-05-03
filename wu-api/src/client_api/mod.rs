@@ -27,26 +27,28 @@ pub fn listen_clients(
         if let Ok((stream, _)) = listener.accept() {
             let aead = aead.clone();
             let shared = shared.clone();
+
             thread::spawn(move || {
                 let conn = ConnBuilder::from(stream, &aead).accept().unwrap();
                 let (server, mut manager) = ServerBuilder::new(conn).build();
                 let name = String::from_utf8(manager.conn().read().unwrap()).unwrap();
+
                 {
                     let shared = shared.write().unwrap();
                     let mut servers = shared.servers_mut();
                     servers.insert(name.clone(), server);
                     // drop write-access
                 }
+
                 while let Ok(data) = manager.conn().read() {
                     let shared = shared.read().unwrap();
                     let servers = shared.servers();
                     let mut server_data = servers.get(&name).unwrap().data_mut();
                     server_data.push_str(&String::from_utf8_lossy(&data));
                 }
+
                 let shared = shared.write().unwrap();
-                let mut servers = shared.servers_mut();
-                println!("{}: {}", &name, servers.get(&name).unwrap().data());
-                servers.remove(&name);
+                shared.servers_mut().remove(&name);
             });
         }
     }

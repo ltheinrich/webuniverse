@@ -9,14 +9,18 @@ pub use common::*;
 use std::env::args;
 use std::io::prelude::*;
 use std::io::BufReader;
+use std::net::TcpListener;
 use std::net::TcpStream;
 use std::process::{Command as Process, Stdio};
+use std::sync::{Arc, RwLock};
+use std::thread;
 use std::thread::sleep;
 use std::time::Duration;
 use wu::crypto::{init_aead, random_an};
 use wu::meta::{init_name, init_version};
 use wu::net::ConnBuilder;
 use wu::Command;
+use wu::Fail;
 
 fn main() {
     // print version
@@ -34,7 +38,7 @@ fn main() {
     }
 
     // configuration
-    let _addr = cmd.param("addr", "[::]:0");
+    let addr = cmd.param("addr", "[::]:0");
     let api_port = cmd.param("api-port", "4499");
     let api_addr = cmd.param("api-addr", "[::1]");
     let api_key = cmd.parameter("api-key", random_an(32));
@@ -51,11 +55,34 @@ fn main() {
         .unwrap();
 
     let stream = TcpStream::connect(format!("{}:{}", api_addr, api_port)).unwrap();
-    let aead = init_aead(api_key);
+    let aead = init_aead(&api_key);
     let mut conn = ConnBuilder::from(stream, &aead).init().unwrap();
-    conn.write(b"lennart").unwrap();
 
-    let stdout = process.stdout.as_mut().unwrap();
+    let stdin = Arc::new(RwLock::new(process.stdin.take().unwrap()));
+    let stdout = process.stdout.take().unwrap();
+    let aead = Arc::new(aead.clone());
+
+    // listen
+    let listener = TcpListener::bind(addr).or_else(Fail::from).unwrap();
+    conn.write(listener.local_addr().unwrap().port().to_be_bytes())
+        .unwrap();
+    thread::spawn(move || {
+        loop {
+            // accept connections
+            if let Ok((stream, _)) = listener.accept() {
+                let stdin = stdin.clone();
+                let aead = aead.clone();
+
+                thread::spawn(move || {
+                    let mut conn = ConnBuilder::from(stream, &aead).accept().unwrap();
+                    let read = conn.read().unwrap();
+                    stdin.write().unwrap().write_all(&read).unwrap();
+                });
+            }
+        }
+    });
+
+    conn.write(b"lennart").unwrap();
     let mut br = BufReader::new(stdout);
     loop {
         let mut buf = Vec::new();

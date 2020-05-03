@@ -12,7 +12,7 @@
 
 <body>
     <noscript>Please enable <strong>WebAssembly (Rust)</strong> and <strong>JavaScript</strong></noscript>
-    <script type="module" src="./index.js"></script>
+    <script type="module" src="./servers.js"></script>
     <div id="vue" class="container">
         <div class="row justify-content-md-center">
             <img class="header-banner" src="../css/header.png" width="962" height="205">
@@ -22,14 +22,15 @@
                 <h6 class="card-title">
                     <nav class="navbar navbar-expand-lg navbar-light bg-light">
                         <div class="navbar-nav">
-                            <a class="nav-item nav-link active" href="./">Dashboard </a>
-                            <a class="nav-item nav-link" href="./servers.html">Servers</a>
+                            <a class="nav-item nav-link" href="./">Dashboard</a>
+                            <a class="nav-item nav-link active" href="./servers.html">Servers</a>
                             <a class="nav-item nav-link" href="./users.html">Users</a>
                             <a class="nav-item nav-link" href="#" id="logout">Logout ({{ username }})</a>
                         </div>
                     </nav>
                 </h6>
-                <h5>TODO: Dashboard</h5>
+                <div id="serverslist" class="list-group"></div>
+                <br>
             </div>
         </div>
         <div class="copyright"><small class="form-text text-muted"><a href="https://ltheinrich.de">Webuniverse

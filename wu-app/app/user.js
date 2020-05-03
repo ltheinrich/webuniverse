@@ -21,8 +21,8 @@ load(async function (wasm) {
         }
     });
     document.getElementById("changeform").onsubmit = function () {
-        const new_username = document.getElementById("new_username");
-        const new_password = document.getElementById("new_password");
+        const new_username = document.getElementById("newusername");
+        const new_password = document.getElementById("newpassword");
         if (new_username.value == "" && new_password.value == "") {
             return alert("Username and password empty") == true;
         } else if (new_password.value == "") {
@@ -39,7 +39,7 @@ load(async function (wasm) {
             } else {
                 alert("API error: " + json.error);
             }
-        }, "users/change", new_username.value != "" && new_password.value != "" ? { new_username: new_username.value, password: new_password_hash, user, ...login_data() } : { password: new_password_hash, user, ...login_data() });
+        }, "users/change", new_username.value != "" && new_password.value != "" ? { newusername: new_username.value, password: new_password_hash, user, ...login_data() } : { password: new_password_hash, user, ...login_data() });
         return false;
     };
 });

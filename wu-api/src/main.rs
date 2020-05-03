@@ -84,15 +84,21 @@ fn handle(
     // unwrap and match url
     let req: HttpRequest = req?;
     let handler = match req.url() {
+        // user
         "/user/login" => api::user::login,
         "/user/delete" => api::user::delete,
         "/user/logout" => api::user::logout,
         "/user/valid" => api::user::valid,
         "/user/update" => api::user::update,
+        // users
         "/users/create" => api::users::create,
         "/users/list" => api::users::list,
         "/users/delete" => api::users::delete,
         "/users/change" => api::users::change,
+        // servers
+        "/servers/list" => api::servers::list,
+        "/servers/data" => api::servers::data,
+        "/servers/exec" => api::servers::exec,
         _ => return Ok(json_error("handler not found")),
     };
 
