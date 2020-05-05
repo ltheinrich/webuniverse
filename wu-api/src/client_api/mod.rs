@@ -2,7 +2,8 @@
 
 pub mod server;
 
-use crate::client_api::server::ServerBuilder;
+mod handlers;
+
 use crate::common::*;
 use std::net::TcpListener;
 use std::sync::{Arc, RwLock};
@@ -25,30 +26,22 @@ pub fn listen_clients(
     loop {
         // accept connections
         if let Ok((stream, _)) = listener.accept() {
+            // clone
             let aead = aead.clone();
             let shared = shared.clone();
 
             thread::spawn(move || {
-                let conn = ConnBuilder::from(stream, &aead).accept().unwrap();
-                let (server, mut manager) = ServerBuilder::new(conn).build();
-                let name = String::from_utf8(manager.conn().read().unwrap()).unwrap();
+                // accept connection
+                let mut conn = ConnBuilder::from(stream, &aead).accept().unwrap();
+                let htype = String::from_utf8(conn.read().unwrap()).unwrap();
+                let name = String::from_utf8(conn.read().unwrap()).unwrap();
 
-                {
-                    let shared = shared.write().unwrap();
-                    let mut servers = shared.servers_mut();
-                    servers.insert(name.clone(), server);
-                    // drop write-access
+                // handle
+                match htype.as_str() {
+                    "add-server" => handlers::add_server(conn, shared.read().unwrap(), name),
+                    "send-stats" => handlers::send_stats(conn, shared.read().unwrap(), name),
+                    _ => {}
                 }
-
-                while let Ok(data) = manager.conn().read() {
-                    let shared = shared.read().unwrap();
-                    let servers = shared.servers();
-                    let mut server_data = servers.get(&name).unwrap().data_mut();
-                    server_data.push_str(&String::from_utf8_lossy(&data));
-                }
-
-                let shared = shared.write().unwrap();
-                shared.servers_mut().remove(&name);
             });
         }
     }

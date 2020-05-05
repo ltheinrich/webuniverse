@@ -1,26 +1,19 @@
 //! Webuniverse Linux client
 #![cfg(target_os = "linux")]
 
-mod common;
+pub mod common;
+
+mod handlers;
 mod utils;
 
-pub use common::*;
-
+use common::*;
 use std::env::args;
-use std::io::prelude::*;
-use std::io::BufReader;
-use std::net::TcpListener;
 use std::net::TcpStream;
-use std::process::{Command as Process, Stdio};
-use std::sync::{Arc, RwLock};
-use std::thread;
-use std::thread::sleep;
-use std::time::Duration;
-use wu::crypto::{init_aead, random_an};
+use wu::crypto::init_aead;
+use wu::crypto::random_an;
 use wu::meta::{init_name, init_version};
 use wu::net::ConnBuilder;
 use wu::Command;
-use wu::Fail;
 
 fn main() {
     // print version
@@ -38,59 +31,26 @@ fn main() {
     }
 
     // configuration
-    let addr = cmd.param("addr", "[::]:0");
-    let api_port = cmd.param("api-port", "4499");
-    let api_addr = cmd.param("api-addr", "[::1]");
+    let addr = cmd.parameter("addr", "[::]:0".to_string());
+    let api_port = cmd.parameter("api-port", 4499u16);
+    let api_addr = cmd.parameter("api-addr", "[::1]".to_string());
     let api_key = cmd.parameter("api-key", random_an(32));
+    let name = cmd.parameter("name", random_an(12));
+    let htype = cmd.arg(0, "");
 
-    let mut process = Process::new(cmd.arg(0, ""))
-        .args(match cmd.arguments().len() {
-            1 => &[],
-            _ => &cmd.arguments()[1..],
-        })
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .unwrap();
-
+    // connect
     let stream = TcpStream::connect(format!("{}:{}", api_addr, api_port)).unwrap();
     let aead = init_aead(&api_key);
     let mut conn = ConnBuilder::from(stream, &aead).init().unwrap();
 
-    let stdin = Arc::new(RwLock::new(process.stdin.take().unwrap()));
-    let stdout = process.stdout.take().unwrap();
-    let aead = Arc::new(aead.clone());
+    // init connection
+    conn.write(htype.as_bytes()).unwrap();
+    conn.write(name.as_bytes()).unwrap();
 
-    // listen
-    let listener = TcpListener::bind(addr).or_else(Fail::from).unwrap();
-    conn.write(listener.local_addr().unwrap().port().to_be_bytes())
-        .unwrap();
-    thread::spawn(move || {
-        loop {
-            // accept connections
-            if let Ok((stream, _)) = listener.accept() {
-                let stdin = stdin.clone();
-                let aead = aead.clone();
-
-                thread::spawn(move || {
-                    let mut conn = ConnBuilder::from(stream, &aead).accept().unwrap();
-                    let read = conn.read().unwrap();
-                    stdin.write().unwrap().write_all(&read).unwrap();
-                });
-            }
-        }
-    });
-
-    conn.write(b"lennart").unwrap();
-    let mut br = BufReader::new(stdout);
-    loop {
-        let mut buf = Vec::new();
-        let read_len = br.read_until(b'\n', &mut buf).unwrap();
-        if read_len != 0 {
-            conn.write(buf).unwrap();
-        } else {
-            sleep(Duration::from_millis(25));
-        }
+    // handle
+    match cmd.arg(0, "") {
+        "add-server" => handlers::add_server(conn, cmd, addr),
+        "send-stats" => handlers::send_stats(conn, cmd),
+        _ => println!("{}", HELP),
     }
 }

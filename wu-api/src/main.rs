@@ -99,6 +99,8 @@ fn handle(
         "/servers/list" => api::servers::list,
         "/servers/data" => api::servers::data,
         "/servers/exec" => api::servers::exec,
+        // server
+        "/server/stats" => api::server::stats,
         _ => return Ok(json_error("handler not found")),
     };
 

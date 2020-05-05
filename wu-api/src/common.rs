@@ -33,6 +33,7 @@ pub struct SharedData {
   logins: RwLock<UserLogins>,
   data_dir: RwLock<String>,
   servers: Arc<RwLock<BTreeMap<String, Server>>>,
+  statistics: RwLock<BTreeMap<String, Statistics>>,
 }
 
 impl SharedData {
@@ -44,6 +45,7 @@ impl SharedData {
       logins: RwLock::new(UserLogins::new()),
       data_dir: RwLock::new(data_dir),
       servers: Arc::new(RwLock::new(BTreeMap::new())),
+      statistics: RwLock::new(BTreeMap::new()),
     }
   }
 
@@ -80,5 +82,69 @@ impl SharedData {
   /// Servers map writeable
   pub fn servers_mut(&self) -> RwLockWriteGuard<'_, BTreeMap<String, Server>> {
     self.servers.write().unwrap()
+  }
+
+  /// Statistics map read-only
+  pub fn statistics(&self) -> RwLockReadGuard<'_, BTreeMap<String, Statistics>> {
+    self.statistics.read().unwrap()
+  }
+
+  /// Statistics map writeable
+  pub fn statistics_mut(&self) -> RwLockWriteGuard<'_, BTreeMap<String, Statistics>> {
+    self.statistics.write().unwrap()
+  }
+}
+
+/// Server statistics
+#[derive(Debug, Default)]
+pub struct Statistics {
+  /// CPU usage in percent
+  cpu: RwLock<f64>,
+
+  /// Memory used and total in kB
+  mem: RwLock<(u64, u64)>,
+
+  /// Disk space used and total in kB
+  disk: RwLock<(u64, u64)>,
+}
+
+impl Statistics {
+  /// Create new statistics
+  pub fn new() -> Self {
+    Self {
+      cpu: RwLock::new(0.0),
+      mem: RwLock::new((0, 0)),
+      disk: RwLock::new((0, 0)),
+    }
+  }
+
+  /// CPU usage in percent read-only
+  pub fn cpu(&self) -> RwLockReadGuard<'_, f64> {
+    self.cpu.read().unwrap()
+  }
+
+  /// CPU usage in percent writeable
+  pub fn cpu_mut(&self) -> RwLockWriteGuard<'_, f64> {
+    self.cpu.write().unwrap()
+  }
+
+  /// Memory usage in percent read-only
+  pub fn mem(&self) -> RwLockReadGuard<'_, (u64, u64)> {
+    self.mem.read().unwrap()
+  }
+
+  /// Memory usage in percent writeable
+  pub fn mem_mut(&self) -> RwLockWriteGuard<'_, (u64, u64)> {
+    self.mem.write().unwrap()
+  }
+
+  /// Disk space usage in percent read-only
+  pub fn disk(&self) -> RwLockReadGuard<'_, (u64, u64)> {
+    self.disk.read().unwrap()
+  }
+
+  /// Disk space usage in percent writeable
+  pub fn disk_mut(&self) -> RwLockWriteGuard<'_, (u64, u64)> {
+    self.disk.write().unwrap()
   }
 }

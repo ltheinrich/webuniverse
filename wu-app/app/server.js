@@ -16,22 +16,24 @@ load(async function (wasm) {
     consoledata.onmouseout = function () {
         this.mouseIsOver = false;
     }
+    reload_console(name, consoledata);
     setInterval(function () {
         reload_console(name, consoledata);
     }, 1000);
     document.getElementById("serverconsole").onsubmit = function () {
-        const server_command = document.getElementById("servercommand");
-        if (server_command.value == "") {
+        const server_command_doc = document.getElementById("servercommand");
+        const server_command = server_command_doc.value;
+        if (server_command == "") {
             return alert("Empty command") == true;
         }
+        server_command_doc.value = "";
         api_fetch(async function (json) {
             if (json.error == false) {
-                reload_console();
-                server_command.value = "";
+                setTimeout(() => { reload_console(name, consoledata) }, 100);
             } else {
                 alert("API error: " + json.error);
             }
-        }, "servers/exec", { name, servercommand: server_command.value, ...login_data() });
+        }, "servers/exec", { name, servercommand: server_command, ...login_data() });
         return false;
     };
 });
@@ -39,13 +41,15 @@ load(async function (wasm) {
 function reload_console(name, consoledata) {
     api_fetch(async function (json) {
         if (json.data != undefined) {
-            consoledata.value += json.data;
-            if (!consoledata.mouseIsOver) {
-                consoledata.scrollTop = consoledata.scrollHeight;
+            if (json.data.length > 0) {
+                consoledata.value += json.data;
+                if (!consoledata.mouseIsOver) {
+                    consoledata.scrollTop = consoledata.scrollHeight;
+                }
             }
         } else {
             alert("API error: " + json.error);
-            if (json.error == "server does not exist") {
+            if (json.error == "server does not exist" || json.error == "unauthenticated") {
                 location.href = "./servers.html";
             }
         }
