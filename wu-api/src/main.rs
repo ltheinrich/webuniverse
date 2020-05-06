@@ -18,7 +18,8 @@ use std::env::args;
 use std::fs::create_dir;
 use std::sync::{Arc, RwLock};
 use utils::json_error;
-use wu::crypto::random_an;
+use wu::crypto::{argon2_hash, hash_password};
+use wu::crypto::{random, random_an};
 use wu::{
     meta::{init_name, init_version},
     Command, Fail,
@@ -52,10 +53,18 @@ fn main() {
 
     // open users database
     create_dir(&data).ok();
-    let user_data = StorageFile::new(&format!("{}/users.wdb", &data)).unwrap();
+    let mut users = StorageFile::new(&format!("{}/users.wdb", &data)).unwrap();
+
+    // create admin:admin used if empty
+    if users.cache().is_empty() {
+        users.cache_mut().insert(
+            "admin".to_string(),
+            argon2_hash(hash_password("admin", "admin"), random(16)).unwrap(),
+        );
+    }
 
     // shared data
-    let shared = Arc::new(RwLock::new(SharedData::new(user_data, data)));
+    let shared = Arc::new(RwLock::new(SharedData::new(users, data)));
 
     // start HTTPS server
     let tls_config = load_certificate(&cert, &key).unwrap();

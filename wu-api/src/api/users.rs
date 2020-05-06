@@ -52,7 +52,7 @@ pub fn create(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
         }
 
         // create user
-        users.insert(user.to_string(), hash(password));
+        users.insert(user.to_string(), password.to_string());
         user_data.write()?;
 
         // return success
@@ -99,7 +99,7 @@ pub fn change(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
         // change password
         if let Some(user_password) = user_data.cache_mut().get_mut(user) {
             // hash and change password
-            *user_password = hash(password);
+            *user_password = password.to_string();
             user_data.write()?;
         } else {
             return Fail::from("user does not exist");

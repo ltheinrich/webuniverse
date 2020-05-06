@@ -4,6 +4,7 @@ use crate::common::*;
 use crate::SharedData;
 use lhi::server::HttpRequest;
 use std::sync::RwLockReadGuard;
+use wu::crypto::argon2_verify;
 use wu::crypto::hash;
 use wu::Fail;
 
@@ -72,18 +73,14 @@ pub fn login(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resul
 
     // get password hash from db
     let user_data = shared.users();
-    match user_data.cache().get(username) {
-        Some(password_hash) => {
-            // verify password hash
-            if password_hash != &hash(password) {
-                return Fail::from("unauthenticated");
-            }
-
+    if let Some(password_hash) = user_data.cache().get(username) {
+        // verify password hash
+        if argon2_verify(password_hash, password) {
             // return login token
-            Ok(jsonify(object!(token: shared.logins_mut().add(username))))
+            return Ok(jsonify(object!(token: shared.logins_mut().add(username))));
         }
-        None => Fail::from("unauthenticated"),
     }
+    Fail::from("unauthenticated")
 }
 
 /// Update user handler

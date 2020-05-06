@@ -9,7 +9,7 @@ load(async function (wasm) {
         } else if (password == "") {
             return alert("Empty password") == true;
         }
-        const password_hash = wasm.hash_password(password, username);
+        const argon2_hash = wasm.argon2_hash(password, username);
         api_fetch(async function (json) {
             if (json.error == false) {
                 alert("User successfuly created");
@@ -17,7 +17,7 @@ load(async function (wasm) {
             } else {
                 alert("API error: " + json.error);
             }
-        }, "users/create", { user: username, password: password_hash, ...login_data() });
+        }, "users/create", { user: username, password: argon2_hash, ...login_data() });
         return false;
     };
 });
