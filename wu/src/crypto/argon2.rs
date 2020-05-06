@@ -1,6 +1,6 @@
 //! Argon2 password hashing
 
-use argon2::{hash_encoded, verify_encoded, Config, ThreadMode, Variant};
+use argon2::{hash_encoded, verify_encoded, Config, Variant};
 use kern::Fail;
 
 /// Generate Argon2 password hash

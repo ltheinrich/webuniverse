@@ -4,7 +4,6 @@ use crate::common::*;
 use crate::SharedData;
 use lhi::server::HttpRequest;
 use std::sync::RwLockReadGuard;
-use wu::crypto::hash;
 use wu::Fail;
 
 /// User deletion handler
