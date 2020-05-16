@@ -40,6 +40,11 @@ pub fn get_username<'a>(data: &BTreeMap<String, &'a str>) -> Result<&'a str, Fai
     get_an(data, "username")
 }
 
+/// Respond plain
+pub fn respond_plain(plain: impl AsRef<[u8]>) -> Vec<u8> {
+    respond(plain, "application/json", cors_headers())
+}
+
 /// Convert JsonValue to response
 pub fn jsonify(value: JsonValue) -> Vec<u8> {
     respond(value.to_string(), "application/json", cors_headers())

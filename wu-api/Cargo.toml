@@ -8,3 +8,4 @@ edition = "2018"
 wu = { path = "../wu" }
 lhi = "=0.0.0-dev.14" # 0.0.0 is outdated
 json = "0.12.4"
+mysql = "18.2.0"

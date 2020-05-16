@@ -3,9 +3,9 @@
 if [ "$#" -eq 0 ]; then
   echo "./run api|client|web"
 elif [ $1 == "api" ]; then
-  cargo run -p wu-$@
+  cargo run -p wu-api --target x86_64-unknown-linux-gnu -- --api-key 12345678901234567890123456789012 ${@:2}
 elif [ $1 == "client" ]; then
-  cargo run -p wu-$@
+  cargo run -p wu-client -- --api-key 12345678901234567890123456789012 ${@:2}
 elif [ $1 == "web" ]; then
   wasm-pack build --dev --no-typescript -t web -d ../wu-app/pkg wu-web
 else

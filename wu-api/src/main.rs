@@ -14,6 +14,7 @@ use client_api::listen_clients;
 pub use common::*;
 use data::StorageFile;
 use lhi::server::{listen, load_certificate, HttpRequest, HttpSettings};
+use mysql::Pool;
 use std::env::args;
 use std::fs::create_dir;
 use std::sync::{Arc, RwLock};
@@ -50,12 +51,17 @@ fn main() {
     let data = cmd.parameter("data", "data".to_string());
     let cert = cmd.parameter("cert", format!("{}/cert.pem", &data));
     let key = cmd.parameter("key", format!("{}/key.pem", &data));
+    let mysql_addr = cmd.param("mysql-addr", "localhost");
+    let mysql_port = cmd.parameter("mysql-port", 3306);
+    let mysql_db = cmd.param("mysql-db", "webuniverse");
+    let mysql_user = cmd.param("mysql-user", "webuniverse");
+    let mysql_pass = cmd.param("mysql-pass", "webuniverse");
 
     // open users database
     create_dir(&data).ok();
     let mut users = StorageFile::new(&format!("{}/users.wdb", &data)).unwrap();
 
-    // create admin:admin used if empty
+    // create admin:admin user if empty
     if users.cache().is_empty() {
         users.cache_mut().insert(
             "admin".to_string(),
@@ -63,8 +69,15 @@ fn main() {
         );
     }
 
+    // connect to MariaDB
+    let mysql_url = format!(
+        "mysql://{}:{}@{}:{}/{}",
+        mysql_user, mysql_pass, mysql_addr, mysql_port, mysql_db
+    );
+    let mysql_pool = Pool::new(mysql_url).unwrap();
+
     // shared data
-    let shared = Arc::new(RwLock::new(SharedData::new(users, data)));
+    let shared = Arc::new(RwLock::new(SharedData::new(users, data, mysql_pool)));
 
     // start HTTPS server
     let tls_config = load_certificate(&cert, &key).unwrap();
@@ -110,6 +123,9 @@ fn handle(
         "/servers/exec" => api::servers::exec,
         // server
         "/server/stats" => api::server::stats,
+        // settings
+        "/settings/all" => api::settings::all,
+        "/settings/set" => api::settings::set,
         _ => return Ok(json_error("handler not found")),
     };
 
