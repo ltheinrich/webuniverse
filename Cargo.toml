@@ -6,9 +6,5 @@ members = [
     "wu-client",
 ]
 
-[profile.release]
-lto = true
-codegen-units = 1
-
 [profile.release.package.wu-web]
 opt-level = "s"

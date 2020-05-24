@@ -28,9 +28,7 @@ load(async function (wasm) {
         }
         server_command_doc.value = "";
         api_fetch(async function (json) {
-            if (json.error == false) {
-                setTimeout(() => { reload_console(name, consoledata) }, 100);
-            } else {
+            if (json.error != false) {
                 alert("API error: " + json.error);
             }
         }, "servers/exec", { name, servercommand: server_command, ...login_data() });

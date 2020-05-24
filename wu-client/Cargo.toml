@@ -1,6 +1,6 @@
 [package]
 name = "wu-client"
-version = "0.0.0-dev"
+version = "0.0.1-beta.0"
 authors = ["Lennart Heinrich <lennart@ltheinrich.de>"]
 edition = "2018"
 
