@@ -23,3 +23,14 @@ pub fn argon2_hash(password: &str, username: &str) -> String {
     let password_hash = crypto::hash_password(password, username);
     crypto::argon2_hash(password_hash, salt).unwrap()
 }
+
+#[wasm_bindgen]
+pub fn str_encode(data: &str) -> String {
+    crypto::hex_encode(data)
+}
+
+#[wasm_bindgen]
+pub fn str_decode(data: &str) -> String {
+    let decoded = crypto::hex_decode(data).unwrap();
+    String::from_utf8(decoded).unwrap()
+}

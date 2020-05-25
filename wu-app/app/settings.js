@@ -18,7 +18,7 @@ load(async function (wasm) {
             } else {
                 alert("API error: " + json.error);
             }
-        }, "settings/set", { settingkey: setting_key.value, settingvalue: setting_value.value, ...login_data() });
+        }, "settings/set", { settingkey: setting_key.value, settingvalue: wasm.str_encode(setting_value.value), ...login_data() });
         return false;
     }
 });

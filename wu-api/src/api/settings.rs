@@ -5,6 +5,7 @@ use json::JsonValue;
 use lhi::server::HttpRequest;
 use mysql::prelude::*;
 use std::sync::RwLockReadGuard;
+use wu::crypto::hex_decode;
 use wu::Fail;
 
 /// Get all settings
@@ -44,6 +45,11 @@ pub fn set(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<
 
     // verify login
     if shared.logins().valid(username, token) {
+        // decode value
+        let setting_value = hex_decode(setting_value).or_else(Fail::from)?;
+        let setting_value = String::from_utf8(setting_value).or_else(Fail::from)?;
+
+        // update value
         let mut conn = shared.mysql_conn()?;
         conn.exec_drop(
             r"UPDATE settings SET `value` = ? WHERE `key` = ?",
