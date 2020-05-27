@@ -35,4 +35,4 @@ Archiv `wu-app.tar.xz` in `/var/www/html/web/` hochladen
 
 `chmod +x wu-client`
 
-`(cd Server/lobby && screen -dmS wu-lobby -L -Logfile wu-lobby.log ../../wu-client add-server --name "Lobby" --api-key MfyiWrCfCncxBabm2M1eJKWxUzbaSXl6 bash ./startsrv.sh)`
+`(cd Server/lobby && screen -dmS wu-lobby -L -Logfile ../../wu-lobby.log ../../wu-client add-server --name "Lobby" --api-key MfyiWrCfCncxBabm2M1eJKWxUzbaSXl6 bash ./startsrv.sh)`
