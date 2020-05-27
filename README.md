@@ -15,7 +15,7 @@ Archiv `wu-app.tar.xz` in `/var/www/html/web/` hochladen
 
 `chmod +x wu-api`
 
-`screen -dmS wu-api ./wu-api --api-key MfyiWrCfCncxBabm2M1eJKWxUzbaSXl6 --mysql-db DATENBANK --mysql-user BENUTZER --mysql-pass PASSWORT`
+`screen -dmS wu-api -L -Logfile wu-api.log ./wu-api --api-key MfyiWrCfCncxBabm2M1eJKWxUzbaSXl6 --mysql-db DATENBANK --mysql-user BENUTZER --mysql-pass PASSWORT`
 
 ### Stats
 `wu-client` in `/home/user/` hochladen
@@ -24,7 +24,7 @@ Archiv `wu-app.tar.xz` in `/var/www/html/web/` hochladen
 
 `chmod +x wu-client`
 
-`screen -dmS wu-stats ./wu-client send-stats --name "Dedicated Server" --api-key MfyiWrCfCncxBabm2M1eJKWxUzbaSXl6`
+`screen -dmS wu-stats -L -Logfile wu-stats.log ./wu-client send-stats --name "Dedicated Server" --api-key MfyiWrCfCncxBabm2M1eJKWxUzbaSXl6`
 
 ### MC Server
 *!Beispiel: Lobby!*
@@ -35,4 +35,4 @@ Archiv `wu-app.tar.xz` in `/var/www/html/web/` hochladen
 
 `chmod +x wu-client`
 
-`(cd Server/lobby && screen -dmS wu-lobby ../../wu-client add-server --name "Lobby" --api-key MfyiWrCfCncxBabm2M1eJKWxUzbaSXl6 bash ./startsrv.sh)`
+`(cd Server/lobby && screen -dmS wu-lobby -L -Logfile wu-lobby.log ../../wu-client add-server --name "Lobby" --api-key MfyiWrCfCncxBabm2M1eJKWxUzbaSXl6 bash ./startsrv.sh)`
