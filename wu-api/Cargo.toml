@@ -1,11 +1,11 @@
 [package]
 name = "wu-api"
-version = "0.0.1-beta.1"
+version = "0.0.1-beta.2"
 authors = ["Lennart Heinrich <lennart@ltheinrich.de>"]
 edition = "2018"
 
 [dependencies]
 wu = { path = "../wu" }
-lhi = "=0.0.0-dev.14" # 0.0.0 is outdated
+lhi = "0.0.1"
 json = "0.12.4"
 mysql = "18.2.0"

@@ -42,11 +42,23 @@ pub fn data(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result
             Some(server) => {
                 // return console data
                 let data = server.data();
+                let read_len = if data.len() >= read_len {
+                    if data.len() - read_len >= 50000 {
+                        data.len() - 50000
+                    } else {
+                        read_len
+                    }
+                } else {
+                    0
+                };
+                Ok(jsonify(object!(data: &data[read_len..], len: data.len())))
+                /*
                 if read_len < data.len() {
                     Ok(jsonify(object!(data: &data[read_len..])))
                 } else {
                     Ok(jsonify(object!(data: "")))
                 }
+                */
             }
             None => Fail::from("server does not exist"),
         }

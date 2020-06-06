@@ -1,5 +1,7 @@
 import { load, api_fetch, login_data } from "../js/common.js";
 
+let data_len = 0;
+
 load(async function (wasm) {
     const get_params = new URLSearchParams(window.location.search);
     const name = get_params.get("name");
@@ -40,7 +42,13 @@ function reload_console(name, consoledata) {
     api_fetch(async function (json) {
         if (json.data != undefined) {
             if (json.data.length > 0) {
-                consoledata.value += json.data;
+                data_len = json.len;
+                let temp_data = consoledata.value + json.data;
+                if (temp_data.length > 50000) {
+                    consoledata.value = temp_data.substring(temp_data.length - 50000);
+                } else {
+                    consoledata.value = temp_data;
+                }
                 if (!consoledata.mouseIsOver) {
                     consoledata.scrollTop = consoledata.scrollHeight;
                 }
@@ -51,5 +59,5 @@ function reload_console(name, consoledata) {
                 location.href = "./servers.html";
             }
         }
-    }, "servers/data", { name, readlen: consoledata.value.length, ...login_data() });
+    }, "servers/data", { name, readlen: data_len, ...login_data() });
 }
