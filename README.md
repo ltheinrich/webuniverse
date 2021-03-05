@@ -2,7 +2,7 @@
 
 # Webuniverse
 
-## Einrichtung
+## Setup
 ### Web
 Archiv `wu-app.tar.xz` in `/var/www/html/web/` hochladen
 
