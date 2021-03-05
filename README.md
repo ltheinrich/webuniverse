@@ -4,7 +4,7 @@
 
 ## Setup
 ### Web
-Archiv `wu-app.tar.xz` in `/var/www/html/web/` hochladen
+Upload archive `wu-app.tar.xz` to `/var/www/html/web/`
 
 `cd /var/www/html/web/`<br>
 
