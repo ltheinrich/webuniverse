@@ -7,20 +7,20 @@ use sha3::{Digest, Sha3_256};
 pub fn hash_password(password: impl AsRef<[u8]>, username: impl AsRef<[u8]>) -> String {
     // init hasher and hash password
     let mut hasher = Sha3_256::new();
-    hasher.input(password);
-    let mut enc = hex_encode(hasher.result());
+    hasher.update(password);
+    let mut enc = hex_encode(hasher.finalize());
 
     // hash the hash with username
     hasher = Sha3_256::new();
-    hasher.input(username);
-    hasher.input(enc);
-    enc = hex_encode(hasher.result());
+    hasher.update(username);
+    hasher.update(enc);
+    enc = hex_encode(hasher.finalize());
 
     // hash the hash with webuniverse
     hasher = Sha3_256::new();
-    hasher.input(b"webuniverse");
-    hasher.input(enc);
-    let result = hasher.result();
+    hasher.update(b"webuniverse");
+    hasher.update(enc);
+    let result = hasher.finalize();
 
     // return hex encoded
     hex_encode(result)
@@ -29,6 +29,6 @@ pub fn hash_password(password: impl AsRef<[u8]>, username: impl AsRef<[u8]>) -> 
 /// SHA3-256 Hash
 pub fn hash(plaintext: impl AsRef<[u8]>) -> String {
     let mut hasher = Sha3_256::new();
-    hasher.input(plaintext);
-    hex_encode(hasher.result())
+    hasher.update(plaintext);
+    hex_encode(hasher.finalize())
 }

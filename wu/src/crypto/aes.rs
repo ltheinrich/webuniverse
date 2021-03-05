@@ -19,7 +19,7 @@ pub type AesNonce = GenericArray<u8, UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>, B
 /// Intialize Aes256Gcm with key
 pub fn init_aead(key: impl AsRef<[u8]>) -> Aes256Gcm {
     let key = GenericArray::clone_from_slice(key.as_ref());
-    Aes256Gcm::new(key)
+    Aes256Gcm::new(&key)
 }
 
 /// AES256-GCM encryption/decryption

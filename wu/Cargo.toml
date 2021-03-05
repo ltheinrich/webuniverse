@@ -5,15 +5,15 @@ authors = ["Lennart Heinrich <lennart@ltheinrich.de>"]
 edition = "2018"
 
 [dependencies]
-kern = "1.1.6"
-rand = "0.7.3"
-sha3 = "0.8.2"
-hex = "0.4.2"
-rust-argon2 = "0.8.2"
+kern = "1.2.3"
+sha3 = "0.9.1"
+hex = "0.4.3"
+rust-argon2 = "0.8.3"
+rand = { version = "0.8.3", features = ["getrandom"] }
 
 [target.'cfg(target_os = "linux")'.dependencies]
-aes-gcm = "0.5.0"
+aes-gcm = "0.8.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm-bindgen = { version = "0.2.60" }
-rand = { version = "0.7.3", features = ["wasm-bindgen"] }
+wasm-bindgen = "0.2.71"
+getrandom = { version = "0.2.2", features = ["js"] }
