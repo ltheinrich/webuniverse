@@ -69,12 +69,18 @@ fn main() {
         );
     }
 
-    // connect to MariaDB
-    let mysql_url = format!(
+    // connect to MariaDB (old+new)
+    /*let mysql_url = format!(
         "mysql://{}:{}@{}:{}/{}",
         mysql_user, mysql_pass, mysql_addr, mysql_port, mysql_db
-    );
-    let mysql_pool = Pool::new(mysql_url).unwrap();
+    );*/
+    let mysql_opts = mysql::OptsBuilder::new()
+        .ip_or_hostname(Some(mysql_addr))
+        .tcp_port(mysql_port)
+        .db_name(Some(mysql_db))
+        .user(Some(mysql_user))
+        .pass(Some(mysql_pass));
+    let mysql_pool = Pool::new(mysql_opts).unwrap();
 
     // shared data
     let shared = Arc::new(RwLock::new(SharedData::new(users, data, mysql_pool)));
