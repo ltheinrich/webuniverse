@@ -8,4 +8,4 @@ edition = "2018"
 wu = { path = "../wu" }
 lhi = "0.0.2"
 json = "0.12.4"
-mysql = "20.1.0"
+mysql = "21.0.1"
