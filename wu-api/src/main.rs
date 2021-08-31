@@ -23,7 +23,7 @@ use wu::crypto::{argon2_hash, hash_password};
 use wu::crypto::{random, random_an};
 use wu::{
     meta::{init_name, init_version},
-    Command, Fail,
+    CliBuilder, Fail,
 };
 
 fn main() {
@@ -36,7 +36,7 @@ fn main() {
 
     // read cli
     let args: Vec<String> = args().collect();
-    let cmd = Command::from(&args, &["help"]);
+    let cmd = CliBuilder::new().options(&["help"]).build(&args);
     if cmd.option("help") {
         return println!("{}", HELP);
     }

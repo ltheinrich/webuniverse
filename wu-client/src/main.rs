@@ -13,7 +13,7 @@ use wu::crypto::init_aead;
 use wu::crypto::random_an;
 use wu::meta::{init_name, init_version};
 use wu::net::ConnBuilder;
-use wu::Command;
+use wu::CliBuilder;
 
 fn main() {
     // print version
@@ -25,7 +25,7 @@ fn main() {
 
     // read cli
     let args: Vec<String> = args().collect();
-    let cmd = Command::from(&args, &["help"]);
+    let cmd = CliBuilder::new().options(&["help"]).build(&args);
     if cmd.option("help") {
         return println!("{}", HELP);
     }
