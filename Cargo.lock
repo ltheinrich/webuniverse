@@ -818,9 +818,9 @@ dependencies = [
 
 [[package]]
 name = "mysql"
-version = "22.1.0"
+version = "22.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e6f8658d54e3c294d94a741a5f414c21431f56f253b5dc2e2582941d834b3a9"
+checksum = "b9d8136c78f78cda5c1a4eee4ce555281b71e3e6db715817bc50e186e623b36f"
 dependencies = [
  "bufstream",
  "bytes",
@@ -832,7 +832,6 @@ dependencies = [
  "mysql_common",
  "named_pipe",
  "native-tls",
- "nix",
  "once_cell",
  "pem",
  "percent-encoding",
@@ -905,19 +904,6 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "tempfile",
-]
-
-[[package]]
-name = "nix"
-version = "0.23.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f866317acbd3a240710c63f065ffb1e4fd466259045ccb504130b7f668f35c6"
-dependencies = [
- "bitflags",
- "cc",
- "cfg-if 1.0.0",
- "libc",
- "memoffset",
 ]
 
 [[package]]
