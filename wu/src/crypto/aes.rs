@@ -6,7 +6,7 @@ use aes_gcm::aead::generic_array::{
     typenum::uint::{UInt, UTerm},
     GenericArray,
 };
-use aes_gcm::aead::{Aead, NewAead};
+use aes_gcm::aead::{Aead, KeyInit};
 pub use aes_gcm::Aes256Gcm;
 
 /// AES 256-bit key
