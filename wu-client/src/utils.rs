@@ -76,7 +76,7 @@ fn read_cpu_times() -> Result<(u64, u64), Fail> {
         }
 
         // cut "cpu  "
-        (&line[5..line.len()]).to_string()
+        line[5..line.len()].to_string()
     };
 
     // split by whitespace and get idle time
