@@ -7,7 +7,6 @@ edition = "2018"
 [dependencies]
 wu = { path = "../wu" }
 console_error_panic_hook = "0.1.7"
-wee_alloc = "0.4.5"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

@@ -1,9 +1,6 @@
 //! Webuniverse Web
 #![cfg(target_arch = "wasm32")]
 
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 use wu::crypto;
 use wu::wasm_bindgen::{self, prelude::*};
 
