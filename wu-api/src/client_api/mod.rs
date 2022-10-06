@@ -10,14 +10,10 @@ use std::sync::{Arc, RwLock};
 use std::thread;
 use wu::crypto::init_aead;
 use wu::net::ConnBuilder;
-use wu::Fail;
+use wu::{Fail, Result};
 
 /// Listen for clients
-pub fn listen_clients(
-    addr: &str,
-    api_key: &str,
-    shared: Arc<RwLock<SharedData>>,
-) -> Result<(), Fail> {
+pub fn listen_clients(addr: &str, api_key: &str, shared: Arc<RwLock<SharedData>>) -> Result<()> {
     // listen
     let listener = TcpListener::bind(addr).or_else(Fail::from)?;
     let aead = Arc::new(init_aead(api_key));

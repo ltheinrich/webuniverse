@@ -6,6 +6,6 @@ edition = "2018"
 
 [dependencies]
 wu = { path = "../wu" }
-lhi = "0.0.2"
+kern = { version = "1.5.1", features = ["http"] }
 json = "0.12.4"
 mysql = "22.2.0"

@@ -2,12 +2,12 @@
 
 use crate::common::*;
 use crate::SharedData;
-use lhi::server::HttpRequest;
+use kern::http::server::HttpRequest;
 use std::sync::RwLockReadGuard;
-use wu::Fail;
+use wu::{Fail, Result};
 
 /// User deletion handler
-pub fn delete(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>, Fail> {
+pub fn delete(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -31,7 +31,7 @@ pub fn delete(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
 }
 
 /// Account creation handler
-pub fn create(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>, Fail> {
+pub fn create(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -62,7 +62,7 @@ pub fn create(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
 }
 
 /// Account list handler
-pub fn list(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>, Fail> {
+pub fn list(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -82,7 +82,7 @@ pub fn list(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result
 }
 
 /// Change user handler
-pub fn change(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>, Fail> {
+pub fn change(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -124,7 +124,7 @@ pub fn change(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
                 shared.logins_mut().rename(user, new_username.to_string());
             }
             Err(err) => {
-                if err.err_msg() == "newusername is not alphanumeric" {
+                if err.to_string() == "newusername is not alphanumeric" {
                     return Err(err);
                 }
             }

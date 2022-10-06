@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 use std::fs::{remove_file, rename, File, OpenOptions};
 use std::io::prelude::*;
 use std::string::ToString;
-use wu::Fail;
+use wu::{Fail, Result};
 
 /// Raw data storage file
 #[derive(Debug)]
@@ -15,7 +15,7 @@ pub struct StorageFile {
 
 impl StorageFile {
     /// Open file or create new
-    pub fn new(file_name: impl AsRef<str>) -> Result<Self, Fail> {
+    pub fn new(file_name: impl AsRef<str>) -> Result<Self> {
         // open file and parse
         let mut file = open_file(file_name)?;
         let cache = parse(read_file(&mut file)?)?;
@@ -35,7 +35,7 @@ impl StorageFile {
     }
 
     /// Serialize map to string and write to file
-    pub fn write(&mut self) -> Result<(), Fail> {
+    pub fn write(&mut self) -> Result<()> {
         // serialize and write
         let buf = serialize(self.cache())?;
         write_file(&mut self.file, buf.as_bytes()).or_else(Fail::from)
@@ -43,7 +43,7 @@ impl StorageFile {
 }
 
 /// Parse storage file buf to map
-pub fn parse(buf: Vec<u8>) -> Result<BTreeMap<String, String>, Fail> {
+pub fn parse(buf: Vec<u8>) -> Result<BTreeMap<String, String>> {
     // to string
     let buf = String::from_utf8(buf).or_else(Fail::from)?;
 
@@ -65,7 +65,7 @@ pub fn parse(buf: Vec<u8>) -> Result<BTreeMap<String, String>, Fail> {
 }
 
 /// Serialize map to string
-pub fn serialize(data: &BTreeMap<String, String>) -> Result<String, Fail> {
+pub fn serialize(data: &BTreeMap<String, String>) -> Result<String> {
     // create buffer
     let mut buf = String::with_capacity(data.len() * 10);
 
@@ -82,7 +82,7 @@ pub fn serialize(data: &BTreeMap<String, String>) -> Result<String, Fail> {
 }
 
 /// Open file or create new
-pub fn open_file(file_name: impl AsRef<str>) -> Result<File, Fail> {
+pub fn open_file(file_name: impl AsRef<str>) -> Result<File> {
     // open and return file
     OpenOptions::new()
         .read(true)
@@ -93,19 +93,19 @@ pub fn open_file(file_name: impl AsRef<str>) -> Result<File, Fail> {
 }
 
 /// Delete file if exists
-pub fn _delete_file(file_name: impl AsRef<str>) -> Result<(), Fail> {
+pub fn _delete_file(file_name: impl AsRef<str>) -> Result<()> {
     // delete file
     remove_file(file_name.as_ref()).or_else(Fail::from)
 }
 
 /// Move file
-pub fn _move_file(file_name: impl AsRef<str>, new_file_name: impl AsRef<str>) -> Result<(), Fail> {
+pub fn _move_file(file_name: impl AsRef<str>, new_file_name: impl AsRef<str>) -> Result<()> {
     // delete file
     rename(file_name.as_ref(), new_file_name.as_ref()).or_else(Fail::from)
 }
 
 /// Read data from file
-pub fn read_file(file: &mut File) -> Result<Vec<u8>, Fail> {
+pub fn read_file(file: &mut File) -> Result<Vec<u8>> {
     // start from beginning
     file.seek(std::io::SeekFrom::Start(0)).or_else(Fail::from)?;
 
@@ -121,7 +121,7 @@ pub fn read_file(file: &mut File) -> Result<Vec<u8>, Fail> {
 }
 
 /// Write data to file
-pub fn write_file(file: &mut File, data: &[u8]) -> Result<(), Fail> {
+pub fn write_file(file: &mut File, data: &[u8]) -> Result<()> {
     // truncate file
     file.set_len(0).or_else(Fail::from)?;
 

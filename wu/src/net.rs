@@ -2,7 +2,7 @@
 
 use crate::crypto::{random, Crypter};
 use aes_gcm::Aes256Gcm;
-use kern::Fail;
+use kern::{Fail, Result};
 use std::convert::TryInto;
 use std::io::prelude::*;
 use std::net::{TcpStream, ToSocketAddrs};
@@ -15,7 +15,7 @@ pub struct ConnBuilder<'a> {
 
 impl<'a> ConnBuilder<'a> {
     /// Create new connection builder
-    pub fn new(addr: impl ToSocketAddrs, aead: &'a Aes256Gcm) -> Result<Self, Fail> {
+    pub fn new(addr: impl ToSocketAddrs, aead: &'a Aes256Gcm) -> Result<Self> {
         let stream = TcpStream::connect(addr).or_else(Fail::from)?;
         Ok(Self { stream, aead })
     }
@@ -26,7 +26,7 @@ impl<'a> ConnBuilder<'a> {
     }
 
     /// Connection initiator
-    pub fn init(mut self) -> Result<Connection<'a>, Fail> {
+    pub fn init(mut self) -> Result<Connection<'a>> {
         // generate and write nonce
         let nonce = random(12);
         self.stream.write_all(&nonce).or_else(Fail::from)?;
@@ -40,7 +40,7 @@ impl<'a> ConnBuilder<'a> {
     }
 
     /// Connection acceptor
-    pub fn accept(mut self) -> Result<Connection<'a>, Fail> {
+    pub fn accept(mut self) -> Result<Connection<'a>> {
         // read nonce
         let mut nonce = vec![0u8; 12];
         self.stream.read_exact(&mut nonce).or_else(Fail::from)?;
@@ -62,13 +62,13 @@ pub struct Connection<'a> {
 
 impl<'a> Connection<'a> {
     /// Reinitiate connection
-    pub fn reinit(&'a mut self) -> Result<Connection<'a>, Fail> {
+    pub fn reinit(&'a mut self) -> Result<Connection<'a>> {
         let addr = self.stream.peer_addr().or_else(Fail::from)?;
         ConnBuilder::new(addr, self.crypt.aead())?.init()
     }
 
     /// Encrypt and write data
-    pub fn write(&mut self, data: impl AsRef<[u8]>) -> Result<(), Fail> {
+    pub fn write(&mut self, data: impl AsRef<[u8]>) -> Result<()> {
         // encrypt and write length
         let enc = self.crypt.encrypt(data.as_ref())?;
         self.stream
@@ -80,7 +80,7 @@ impl<'a> Connection<'a> {
     }
 
     /// Read and decrypt data
-    pub fn read(&mut self) -> Result<Vec<u8>, Fail> {
+    pub fn read(&mut self) -> Result<Vec<u8>> {
         // read length
         let mut len_buf = vec![0u8; 8];
         self.stream.read_exact(&mut len_buf).or_else(Fail::from)?;

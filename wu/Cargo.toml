@@ -5,8 +5,8 @@ authors = ["Lennart Heinrich <lennart@ltheinrich.de>"]
 edition = "2018"
 
 [dependencies]
-kern = "1.4.0"
-sha3 = "0.10.2"
+kern = "1.5.1"
+sha3 = "0.10.5"
 hex = "0.4.3"
 rust-argon2 = "1.0.0"
 rand = { version = "0.8.5", features = ["getrandom"] }
@@ -15,5 +15,5 @@ rand = { version = "0.8.5", features = ["getrandom"] }
 aes-gcm = "0.10.1"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm-bindgen = "0.2.82"
+wasm-bindgen = "0.2.83"
 getrandom = { version = "0.2.7", features = ["js"] }

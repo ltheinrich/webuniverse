@@ -2,12 +2,12 @@
 
 use crate::common::*;
 use json::JsonValue;
-use lhi::server::HttpRequest;
+use kern::http::server::HttpRequest;
 use std::sync::RwLockReadGuard;
-use wu::Fail;
+use wu::{Fail, Result};
 
 /// List server statistics handler
-pub fn stats(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>, Fail> {
+pub fn stats(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;

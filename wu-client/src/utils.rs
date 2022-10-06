@@ -3,15 +3,16 @@
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 use std::process::Command;
+use std::result::Result as StdResult;
 use std::sync::mpsc::{channel, Receiver};
 use std::thread::{sleep, spawn, JoinHandle};
 use std::time::Duration;
-use wu::Fail;
+use wu::{Fail, Result};
 
 /// Resource usage receiver and thread
 type ResourceUsageRx = (
     Receiver<(f64, (u64, u64), (u64, u64))>,
-    JoinHandle<Result<(), Fail>>,
+    JoinHandle<StdResult<(), Fail>>,
 );
 
 /// Get CPU and memory usage every duration except first
@@ -22,22 +23,22 @@ pub fn cpu_mem_usage(duration: Duration) -> ResourceUsageRx {
     // spawn sender thread
     let thread = spawn(move || {
         // read first cpu times and wait first second
-        let (mut prev_idle, mut prev_total) = read_cpu_times()?;
+        let (mut prev_idle, mut prev_total) = read_cpu_times().or_else(Fail::std)?;
         sleep(duration);
 
         // send cpu usage continously
         loop {
             // read cpu, memory and disk space and calculate difference for cpu
-            let (idle_cpu, total_cpu) = read_cpu_times()?;
-            let (used_mem, total_mem) = read_memory_usage()?;
-            let (used_disk, total_disk) = read_disk_space()?;
+            let (idle_cpu, total_cpu) = read_cpu_times().or_else(Fail::std)?;
+            let (used_mem, total_mem) = read_memory_usage().or_else(Fail::std)?;
+            let (used_disk, total_disk) = read_disk_space().or_else(Fail::std)?;
             let dif_idle = (idle_cpu - prev_idle) as f64;
             let dif_total = (total_cpu - prev_total) as f64;
 
             // calculate cpu and memory usage and send
             let cpu_usage = ((1.0 - dif_idle / dif_total) * 10000.0).round() / 100.0;
             tx.send((cpu_usage, (used_mem, total_mem), (used_disk, total_disk)))
-                .or_else(Fail::from)?;
+                .or_else(Fail::std)?;
 
             // set previous times and wait next second
             prev_idle = idle_cpu;
@@ -51,7 +52,7 @@ pub fn cpu_mem_usage(duration: Duration) -> ResourceUsageRx {
 }
 
 /// Get CPU idle and total time from /proc/stat
-fn read_cpu_times() -> Result<(u64, u64), Fail> {
+fn read_cpu_times() -> Result<(u64, u64)> {
     // open file
     let mut file = OpenOptions::new()
         .read(true)
@@ -94,7 +95,7 @@ fn read_cpu_times() -> Result<(u64, u64), Fail> {
 }
 
 /// Get memory used and total memory from /proc/meminfo
-fn read_memory_usage() -> Result<(u64, u64), Fail> {
+fn read_memory_usage() -> Result<(u64, u64)> {
     // open file
     let mut file = OpenOptions::new()
         .read(true)
@@ -132,7 +133,7 @@ fn read_memory_usage() -> Result<(u64, u64), Fail> {
 }
 
 /// Get used and total disk space from `df /`
-fn read_disk_space() -> Result<(u64, u64), Fail> {
+fn read_disk_space() -> Result<(u64, u64)> {
     // output of `df /`
     let out = Command::new("df").arg("/").output().or_else(Fail::from)?;
     let out = String::from_utf8(out.stdout).or_else(Fail::from)?;

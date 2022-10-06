@@ -1,6 +1,6 @@
 //! AES256-GCM encryption/decryption
 
-use crate::Fail;
+use crate::{Fail, Result};
 use aes_gcm::aead::generic_array::{
     typenum::bit::{B0, B1},
     typenum::uint::{UInt, UTerm},
@@ -38,14 +38,14 @@ impl<'a> Crypter<'a> {
     }
 
     /// Encrypt data
-    pub fn encrypt(&self, data: impl AsRef<[u8]>) -> Result<Vec<u8>, Fail> {
+    pub fn encrypt(&self, data: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         self.aead
             .encrypt(&self.nonce, data.as_ref())
             .or_else(|err| Fail::from(format!("failed to encrypt: {:?}", err)))
     }
 
     /// Decrypt data
-    pub fn decrypt(&self, data: impl AsRef<[u8]>) -> Result<Vec<u8>, Fail> {
+    pub fn decrypt(&self, data: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         self.aead
             .decrypt(&self.nonce, data.as_ref())
             .or_else(|err| Fail::from(format!("failed to decrypt: {:?}", err)))

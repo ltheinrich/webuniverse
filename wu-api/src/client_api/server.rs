@@ -4,7 +4,7 @@ use std::convert::TryInto;
 use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 use wu::crypto::Aes256Gcm;
 use wu::net::{ConnBuilder, Connection};
-use wu::Fail;
+use wu::Result;
 
 /// Server builder
 pub struct ServerBuilder<'a> {
@@ -50,7 +50,7 @@ impl Server {
     }
 
     /// Send command to server
-    pub fn cmd(&self, cmd: String) -> Result<(), Fail> {
+    pub fn cmd(&self, cmd: String) -> Result<()> {
         let mut conn = ConnBuilder::new(&self.addr, &self.aead)?.init()?;
         conn.write(cmd)
     }

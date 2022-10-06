@@ -8,7 +8,7 @@ use crate::data::StorageFile;
 use mysql::{Pool, PooledConn};
 use std::collections::BTreeMap;
 use std::sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard};
-use wu::Fail;
+use wu::{Fail, Result};
 
 /// Help output
 pub const HELP: &str = "
@@ -104,7 +104,7 @@ impl SharedData {
     }
 
     /// MySQL database connection read-only
-    pub fn mysql_conn(&self) -> Result<PooledConn, Fail> {
+    pub fn mysql_conn(&self) -> Result<PooledConn> {
         self.mysql_pool.get_conn().or_else(Fail::from)
     }
 }

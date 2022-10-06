@@ -1,12 +1,12 @@
 //! Servers API
 
 use crate::common::*;
-use lhi::server::HttpRequest;
+use kern::http::server::HttpRequest;
 use std::sync::RwLockReadGuard;
-use wu::Fail;
+use wu::{Fail, Result};
 
 /// List servers handler
-pub fn list(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>, Fail> {
+pub fn list(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -26,7 +26,7 @@ pub fn list(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result
 }
 
 /// Get server console data handler
-pub fn data(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>, Fail> {
+pub fn data(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -68,7 +68,7 @@ pub fn data(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result
 }
 
 /// Execute server command handler
-pub fn exec(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>, Fail> {
+pub fn exec(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;

@@ -13,7 +13,7 @@ mod utils;
 use client_api::listen_clients;
 pub use common::*;
 use data::StorageFile;
-use lhi::server::{listen, load_certificate, HttpRequest, HttpSettings};
+use kern::http::server::{listen, load_certificate, HttpRequest, HttpSettings};
 use mysql::Pool;
 use std::env::args;
 use std::fs::create_dir;
@@ -23,7 +23,7 @@ use wu::crypto::{argon2_hash, hash_password};
 use wu::crypto::{random, random_an};
 use wu::{
     meta::{init_name, init_version},
-    CliBuilder, Fail,
+    CliBuilder, Result,
 };
 
 fn main() {
@@ -105,10 +105,7 @@ fn main() {
 }
 
 /// Assigning requests to handlers
-fn handle(
-    req: Result<HttpRequest, Fail>,
-    shared: Arc<RwLock<SharedData>>,
-) -> Result<Vec<u8>, Fail> {
+fn handle(req: Result<HttpRequest>, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>> {
     // unwrap and match url
     let req: HttpRequest = req?;
     let handler = match req.url() {
