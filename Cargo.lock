@@ -637,9 +637,9 @@ checksum = "f9b7d56ba4a8344d6be9729995e6b06f928af29998cdf79fe390cbf6b1fee838"
 
 [[package]]
 name = "kern"
-version = "1.4.0"
+version = "1.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a9f2be012818b5ffef7b247d0defb7a14f5a787e52a4c4a43935acda05aeb46d"
+checksum = "0aead3af9e3a85706be1661183b00eb321cc8618b2a8c5b100b996ee90c7f46b"
 
 [[package]]
 name = "lazy_static"
