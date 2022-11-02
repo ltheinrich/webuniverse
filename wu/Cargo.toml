@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 kern = "1.5.1"
-sha3 = "0.10.5"
+sha3 = "0.10.6"
 hex = "0.4.3"
 rust-argon2 = "1.0.0"
 rand = { version = "0.8.5", features = ["getrandom"] }
@@ -16,4 +16,4 @@ aes-gcm = "0.10.1"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "0.2.83"
-getrandom = { version = "0.2.7", features = ["js"] }
+getrandom = { version = "0.2.8", features = ["js"] }
