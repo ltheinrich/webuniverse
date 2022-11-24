@@ -14,11 +14,12 @@ use wu::Fail;
 
 pub fn add_server(mut conn: Connection, cmd: Command, addr: String) {
     // start process
+    let args: &[&str] = match cmd.arguments().len() {
+        len if len <= 2 => &[],
+        _ => &cmd.arguments()[2..],
+    };
     let mut process = Process::new(cmd.arg(1, ""))
-        .args(match cmd.arguments().len() {
-            len if len <= 2 => &[],
-            _ => &cmd.arguments()[2..],
-        })
+        .args(args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
