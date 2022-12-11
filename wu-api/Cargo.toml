@@ -8,4 +8,4 @@ edition = "2018"
 wu = { path = "../wu" }
 kern = { version = "1.5.1", features = ["http"] }
 json = "0.12.4"
-mysql = "23.0.0"
+mysql = "23.0.1"

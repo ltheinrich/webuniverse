@@ -435,9 +435,9 @@ dependencies = [
 
 [[package]]
 name = "derive_utils"
-version = "0.11.2"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "532b4c15dccee12c7044f1fcad956e98410860b22231e44a3b827464797ca7bf"
+checksum = "7590f99468735a318c254ca9158d0c065aa9b5312896b5a043b5e39bc96f5fa2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -661,11 +661,10 @@ dependencies = [
 
 [[package]]
 name = "io-enum"
-version = "1.0.1"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "03e3306b0f260aad2872563eb0d5d1a59f2420fad270a661dce59a01e92d806b"
+checksum = "e4b0d47a958cb166282b4dc4840a35783e861c2b39080af846e6481ebe145eee"
 dependencies = [
- "autocfg",
  "derive_utils",
  "quote",
  "syn",
@@ -873,9 +872,9 @@ dependencies = [
 
 [[package]]
 name = "mysql"
-version = "23.0.0"
+version = "23.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f084752e065cc4731849b34b687afb83211f085eb3c34c578a7028d3a157dca6"
+checksum = "05f11339ca5c251941805d51362a07823605a80586ced92914ab7de84fba813f"
 dependencies = [
  "bufstream",
  "bytes",
