@@ -38,7 +38,7 @@ fn main() {
     let args: Vec<String> = args().collect();
     let cmd = CliBuilder::new().options(&["help"]).build(&args);
     if cmd.option("help") {
-        return println!("{}", HELP);
+        return println!("{HELP}");
     }
 
     // configuration
@@ -88,7 +88,7 @@ fn main() {
     // start HTTPS server
     let tls_config = load_certificate(&cert, &key).unwrap();
     let _listeners = listen(
-        &format!("{}:{}", addr, port),
+        &format!("{addr}:{port}"),
         threads,
         HttpSettings::new(),
         tls_config,
@@ -98,10 +98,10 @@ fn main() {
     .unwrap();
 
     // print info message
-    println!("HTTPS server available on {}:{}", addr, port);
+    println!("HTTPS server available on {addr}:{port}");
 
     // client api
-    listen_clients(&format!("{}:{}", api_addr, api_port), &api_key, shared).unwrap();
+    listen_clients(&format!("{api_addr}:{api_port}"), &api_key, shared).unwrap();
 }
 
 /// Assigning requests to handlers

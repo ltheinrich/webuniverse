@@ -27,7 +27,7 @@ fn main() {
     let args: Vec<String> = args().collect();
     let cmd = CliBuilder::new().options(&["help"]).build(&args);
     if cmd.option("help") {
-        return println!("{}", HELP);
+        return println!("{HELP}");
     }
 
     // configuration
@@ -39,7 +39,7 @@ fn main() {
     let htype = cmd.arg(0, "");
 
     // connect
-    let stream = TcpStream::connect(format!("{}:{}", api_addr, api_port)).unwrap();
+    let stream = TcpStream::connect(format!("{api_addr}:{api_port}")).unwrap();
     let aead = init_aead(api_key);
     let mut conn = ConnBuilder::from(stream, &aead).init().unwrap();
 
@@ -51,6 +51,6 @@ fn main() {
     match cmd.arg(0, "") {
         "add-server" => handlers::add_server(conn, cmd, addr),
         "send-stats" => handlers::send_stats(conn, cmd),
-        _ => println!("{}", HELP),
+        _ => println!("{HELP}"),
     }
 }

@@ -41,14 +41,14 @@ impl<'a> Crypter<'a> {
     pub fn encrypt(&self, data: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         self.aead
             .encrypt(&self.nonce, data.as_ref())
-            .or_else(|err| Fail::from(format!("failed to encrypt: {:?}", err)))
+            .or_else(|err| Fail::from(format!("failed to encrypt: {err:?}")))
     }
 
     /// Decrypt data
     pub fn decrypt(&self, data: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         self.aead
             .decrypt(&self.nonce, data.as_ref())
-            .or_else(|err| Fail::from(format!("failed to decrypt: {:?}", err)))
+            .or_else(|err| Fail::from(format!("failed to decrypt: {err:?}")))
     }
 
     /// Get AEAD

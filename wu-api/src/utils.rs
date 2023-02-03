@@ -11,14 +11,14 @@ use wu::{Fail, Result};
 pub fn get_str<'a>(data: &BTreeMap<String, &'a str>, key: &str) -> Result<&'a str> {
     Ok(*data
         .get(key)
-        .ok_or_else(|| Fail::new(format!("{} required", key)))?)
+        .ok_or_else(|| Fail::new(format!("{key} required")))?)
 }
 
 /// Get value or fail
 pub fn get<T: FromStr>(data: &BTreeMap<String, &str>, key: &str) -> Result<T> {
     get_str(data, key)?
         .parse()
-        .or_else(|_| Fail::from(format!("{} is not correct type", key)))
+        .or_else(|_| Fail::from(format!("{key} is not correct type")))
 }
 
 /// Get alphanumeric value as string or fail
@@ -28,7 +28,7 @@ pub fn get_an<'a>(data: &BTreeMap<String, &'a str>, key: &str) -> Result<&'a str
 
     // check if alphanumeric
     if !an.chars().all(char::is_alphanumeric) {
-        return Fail::from(format!("{} is not alphanumeric", key));
+        return Fail::from(format!("{key} is not alphanumeric"));
     }
 
     // return string
@@ -52,7 +52,7 @@ pub fn jsonify(value: JsonValue) -> Vec<u8> {
 
 /// Convert error message into json format error
 pub fn json_error<E: Display>(err: E) -> Vec<u8> {
-    jsonify(object!(error: format!("{}", err)))
+    jsonify(object!(error: err.to_string()))
 }
 
 pub fn cors_headers() -> Option<ResponseData<'static>> {
