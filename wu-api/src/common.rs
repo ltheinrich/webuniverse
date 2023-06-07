@@ -6,7 +6,7 @@ use crate::api::logins::UserLogins;
 use crate::client_api::server::Server;
 use crate::data::StorageFile;
 use mysql::{Pool, PooledConn};
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 use std::sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard};
 use wu::{Fail, Result};
 
@@ -39,8 +39,8 @@ pub struct SharedData {
     users: RwLock<StorageFile>,
     logins: RwLock<UserLogins>,
     data_dir: RwLock<String>,
-    servers: Arc<RwLock<BTreeMap<String, Server>>>,
-    statistics: RwLock<BTreeMap<String, Statistics>>,
+    servers: Arc<RwLock<HashMap<String, Server>>>,
+    statistics: RwLock<HashMap<String, Statistics>>,
     mysql_pool: Pool,
 }
 
@@ -52,8 +52,8 @@ impl SharedData {
             users: RwLock::new(users),
             logins: RwLock::new(UserLogins::new()),
             data_dir: RwLock::new(data_dir),
-            servers: Arc::new(RwLock::new(BTreeMap::new())),
-            statistics: RwLock::new(BTreeMap::new()),
+            servers: Arc::new(RwLock::new(HashMap::new())),
+            statistics: RwLock::new(HashMap::new()),
             mysql_pool,
         }
     }
@@ -84,22 +84,22 @@ impl SharedData {
     }
 
     /// Servers map read-only
-    pub fn servers(&self) -> RwLockReadGuard<'_, BTreeMap<String, Server>> {
+    pub fn servers(&self) -> RwLockReadGuard<'_, HashMap<String, Server>> {
         self.servers.read().unwrap()
     }
 
     /// Servers map writeable
-    pub fn servers_mut(&self) -> RwLockWriteGuard<'_, BTreeMap<String, Server>> {
+    pub fn servers_mut(&self) -> RwLockWriteGuard<'_, HashMap<String, Server>> {
         self.servers.write().unwrap()
     }
 
     /// Statistics map read-only
-    pub fn statistics(&self) -> RwLockReadGuard<'_, BTreeMap<String, Statistics>> {
+    pub fn statistics(&self) -> RwLockReadGuard<'_, HashMap<String, Statistics>> {
         self.statistics.read().unwrap()
     }
 
     /// Statistics map writeable
-    pub fn statistics_mut(&self) -> RwLockWriteGuard<'_, BTreeMap<String, Statistics>> {
+    pub fn statistics_mut(&self) -> RwLockWriteGuard<'_, HashMap<String, Statistics>> {
         self.statistics.write().unwrap()
     }
 

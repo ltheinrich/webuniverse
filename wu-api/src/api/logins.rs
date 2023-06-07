@@ -2,7 +2,7 @@
 
 pub use crate::common::*;
 
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 use std::time::{Duration, SystemTime};
 use wu::crypto::random_an;
 
@@ -12,14 +12,14 @@ const VALID_LOGIN_SECS: u64 = 3600;
 /// User login/token management
 #[derive(Clone, Debug, Default)]
 pub struct UserLogins {
-    user_logins: BTreeMap<String, Vec<(String, SystemTime)>>,
+    user_logins: HashMap<String, Vec<(String, SystemTime)>>,
 }
 
 impl UserLogins {
     /// Create empty
     pub fn new() -> Self {
         Self {
-            user_logins: BTreeMap::new(),
+            user_logins: HashMap::new(),
         }
     }
 

@@ -1,6 +1,6 @@
 //! Database
 
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 use std::fs::{remove_file, rename, File, OpenOptions};
 use std::io::prelude::*;
 use std::string::ToString;
@@ -10,7 +10,7 @@ use wu::{Fail, Result};
 #[derive(Debug)]
 pub struct StorageFile {
     file: File,
-    cache: BTreeMap<String, String>,
+    cache: HashMap<String, String>,
 }
 
 impl StorageFile {
@@ -25,12 +25,12 @@ impl StorageFile {
     }
 
     /// Get map from cache
-    pub fn cache(&self) -> &BTreeMap<String, String> {
+    pub fn cache(&self) -> &HashMap<String, String> {
         &self.cache
     }
 
     /// Get map from cache mutably
-    pub fn cache_mut(&mut self) -> &mut BTreeMap<String, String> {
+    pub fn cache_mut(&mut self) -> &mut HashMap<String, String> {
         &mut self.cache
     }
 
@@ -43,12 +43,12 @@ impl StorageFile {
 }
 
 /// Parse storage file buf to map
-pub fn parse(buf: Vec<u8>) -> Result<BTreeMap<String, String>> {
+pub fn parse(buf: Vec<u8>) -> Result<HashMap<String, String>> {
     // to string
     let buf = String::from_utf8(buf).or_else(Fail::from)?;
 
     // initialize map and split lines
-    let mut conf = BTreeMap::new();
+    let mut conf = HashMap::new();
     buf.split('\n')
         // seperate and trim
         .map(|l| l.splitn(2, '=').map(|c| c.trim()).collect())
@@ -65,7 +65,7 @@ pub fn parse(buf: Vec<u8>) -> Result<BTreeMap<String, String>> {
 }
 
 /// Serialize map to string
-pub fn serialize(data: &BTreeMap<String, String>) -> Result<String> {
+pub fn serialize(data: &HashMap<String, String>) -> Result<String> {
     // create buffer
     let mut buf = String::with_capacity(data.len() * 10);
 
