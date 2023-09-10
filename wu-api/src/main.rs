@@ -18,7 +18,6 @@ use mysql::Pool;
 use std::env::args;
 use std::fs::create_dir;
 use std::sync::{Arc, RwLock};
-use utils::json_error;
 use wu::crypto::{argon2_hash, hash_password};
 use wu::crypto::{random, random_an};
 use wu::{
