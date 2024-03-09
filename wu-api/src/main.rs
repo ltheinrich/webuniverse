@@ -13,7 +13,7 @@ mod utils;
 use client_api::listen_clients;
 pub use common::*;
 use data::StorageFile;
-use kern::http::server::{listen, load_certificate, HttpRequest, HttpSettings};
+use kern::http::server::{load_certificate, HttpRequest, HttpServerBuilder};
 use mysql::Pool;
 use std::env::args;
 use std::fs::create_dir;
@@ -86,15 +86,13 @@ fn main() {
 
     // start HTTPS server
     let tls_config = load_certificate(&cert, &key).unwrap();
-    let _listeners = listen(
-        &format!("{addr}:{port}"),
-        threads,
-        HttpSettings::new(),
-        tls_config,
-        handle,
-        shared.clone(),
-    )
-    .unwrap();
+    HttpServerBuilder::new()
+        .addr(format!("{addr}:{port}"))
+        .threads(threads)
+        .tls_on(tls_config)
+        .handler(handle)
+        .build(shared.clone())
+        .unwrap();
 
     // print info message
     println!("HTTPS server available on {addr}:{port}");
@@ -104,9 +102,8 @@ fn main() {
 }
 
 /// Assigning requests to handlers
-fn handle(req: Result<HttpRequest>, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>> {
-    // unwrap and match url
-    let req: HttpRequest = req?;
+fn handle(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>> {
+    // match url
     let handler = match req.url() {
         // user
         "/user/login" => api::user::login,
