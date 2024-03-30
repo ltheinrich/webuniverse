@@ -88,6 +88,7 @@ pub fn open_file(file_name: impl AsRef<str>) -> Result<File> {
         .read(true)
         .write(true)
         .create(true)
+        .truncate(true)
         .open(file_name.as_ref())
         .or_else(Fail::from)
 }
