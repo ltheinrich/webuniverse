@@ -984,9 +984,9 @@ dependencies = [
 
 [[package]]
 name = "mysql-common-derive"
-version = "0.31.0"
+version = "0.31.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c60492b5eb751e55b42d716b6b26dceb66767996cd7a5560a842fbf613ca2e92"
+checksum = "afe0450cc9344afff34915f8328600ab5ae19260802a334d0f72d2d5bdda3bfe"
 dependencies = [
  "darling",
  "heck",
