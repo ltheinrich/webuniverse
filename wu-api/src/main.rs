@@ -58,7 +58,7 @@ fn main() {
 
     // open users database
     create_dir(&data).ok();
-    let mut users = StorageFile::new(&format!("{}/users.wdb", &data)).unwrap();
+    let mut users = StorageFile::new(format!("{}/users.wdb", &data)).unwrap();
 
     // create admin:admin user if empty
     if users.cache().is_empty() {
