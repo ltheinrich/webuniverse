@@ -2,7 +2,7 @@
 name = "wu"
 version = "0.0.1-beta.0"
 authors = ["Lennart Heinrich <lennart@ltheinrich.de>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 kern = "1.7.1"
