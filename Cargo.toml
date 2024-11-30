@@ -1,10 +1,5 @@
 [workspace]
-members = [
-    "wu",
-    "wu-api",
-    "wu-web",
-    "wu-client",
-]
+members = ["wu", "wu-api", "wu-web", "wu-client"]
 
 [profile.release.package.wu-web]
 opt-level = "s"
