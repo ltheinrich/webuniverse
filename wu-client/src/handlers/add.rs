@@ -18,8 +18,9 @@ pub fn add_server(mut conn: Connection, cmd: Command, addr: String) {
         len if len <= 2 => &[],
         _ => &cmd.arguments()[2..],
     };
-    // is this intended?
-    #[allow(clippy::zombie_processes)]
+
+    #[allow(unknown_lints)] // fix for older linters
+    #[allow(clippy::zombie_processes)] // is this intended?
     let mut process = Process::new(cmd.arg(1, ""))
         .args(args)
         .stdin(Stdio::piped())
