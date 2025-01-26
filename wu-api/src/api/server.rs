@@ -1,7 +1,7 @@
 //! Servers API
 
 use crate::common::*;
-use json::JsonValue;
+use jzon::JsonValue;
 use kern::http::server::HttpRequest;
 use std::sync::RwLockReadGuard;
 use wu::{Fail, Result};

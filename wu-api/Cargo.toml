@@ -7,5 +7,5 @@ edition = "2021"
 [dependencies]
 wu = { path = "../wu" }
 kern = { version = "1.7.1", features = ["tls"] }
-json = "0.12.4"
+jzon = "0.12.5"
 mysql = "26.0.0"

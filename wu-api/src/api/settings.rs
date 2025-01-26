@@ -1,7 +1,7 @@
 //! Settings API
 
 use crate::common::*;
-use json::JsonValue;
+use jzon::JsonValue;
 use kern::http::server::HttpRequest;
 use mysql::prelude::*;
 use std::sync::RwLockReadGuard;

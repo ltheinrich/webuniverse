@@ -2,7 +2,7 @@
 #![cfg(target_os = "linux")]
 
 #[macro_use]
-extern crate json;
+extern crate jzon;
 
 mod api;
 mod client_api;
