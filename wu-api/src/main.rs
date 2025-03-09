@@ -13,15 +13,14 @@ mod utils;
 use client_api::listen_clients;
 pub use common::*;
 use data::StorageFile;
-use kern::http::server::{HttpRequest, HttpServerBuilder, load_certificate};
+use kern::http::server::{HttpRequest, HttpServerBuilder};
 use mysql::Pool;
-use rustls::ServerConfig;
 use std::env::args;
 use std::fs::create_dir;
-use std::sync::{Arc, OnceLock};
+use std::sync::OnceLock;
 use wu::crypto::{argon2_hash, hash_password};
 use wu::crypto::{random, random_an};
-use wu::http::server::HttpSettings;
+use wu::http::server::{HttpSettings, load_certificate_provider};
 use wu::{
     CliBuilder, Result,
     meta::{init_name, init_version},
@@ -58,7 +57,6 @@ fn main() {
     let data = cmd.parameter("data", "data".to_string());
     let cert = cmd.parameter("cert", format!("{}/cert.pem", &data));
     let key = cmd.parameter("key", format!("{}/key.pem", &data));
-    TLS_PATHS.set((cert, key)).unwrap();
     let mysql_addr = cmd.param("mysql-addr", "localhost");
     let mysql_port = cmd.parameter("mysql-port", 3306);
     let mysql_db = cmd.param("mysql-db", "webuniverse");
@@ -95,6 +93,7 @@ fn main() {
     SHARED.set(shared).map_err(|_| 0).unwrap();
 
     // start HTTPS server
+    let tls_config = load_certificate_provider(cert, key).unwrap();
     let settings = HttpSettings::new().threads_num(threads);
     HttpServerBuilder::new()
         .addr(format!("{addr}:{port}"))
@@ -109,13 +108,6 @@ fn main() {
 
     // client api
     listen_clients(&format!("{api_addr}:{api_port}"), &api_key).unwrap();
-}
-
-static TLS_PATHS: OnceLock<(String, String)> = OnceLock::new();
-
-fn tls_config() -> Arc<ServerConfig> {
-    let (cert, key) = TLS_PATHS.get().unwrap();
-    Arc::new(load_certificate(cert, key).unwrap())
 }
 
 /// Assigning requests to handlers

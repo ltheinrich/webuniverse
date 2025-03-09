@@ -745,9 +745,9 @@ dependencies = [
 
 [[package]]
 name = "kern"
-version = "1.8.1"
+version = "1.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "955df004c3a0d8b0d7943494c354209c9efb3c9b215be67ba3c5ddcf184bf894"
+checksum = "d9c355acb1cd21c77dc02effbad1db943cdc06f4a6061ff82adcdd30e5b70e31"
 dependencies = [
  "rustls",
  "rustls-pemfile",
@@ -1796,7 +1796,6 @@ dependencies = [
  "jzon",
  "kern",
  "mysql",
- "rustls",
  "wu",
 ]
 

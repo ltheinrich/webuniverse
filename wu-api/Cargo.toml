@@ -6,7 +6,6 @@ edition = "2024"
 
 [dependencies]
 wu = { path = "../wu" }
-kern = { version = "1.8.1", features = ["tls"] }
+kern = { version = "1.8.2", features = ["tls"] }
 jzon = "0.12.5"
 mysql = "26.0.0"
-rustls = "0.23.23"
