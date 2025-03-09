@@ -4,12 +4,11 @@ use crate::common::*;
 use jzon::JsonValue;
 use kern::http::server::HttpRequest;
 use mysql::prelude::*;
-use std::sync::RwLockReadGuard;
 use wu::crypto::hex_decode;
 use wu::{Fail, Result};
 
 /// Get all settings
-pub fn all(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
+pub fn all(req: HttpRequest, shared: &SharedData) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -35,7 +34,7 @@ pub fn all(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<
 }
 
 /// Set setting
-pub fn set(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
+pub fn set(req: HttpRequest, shared: &SharedData) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;

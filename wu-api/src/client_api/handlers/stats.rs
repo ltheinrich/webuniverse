@@ -2,10 +2,9 @@
 
 use crate::common::*;
 use std::convert::TryInto;
-use std::sync::RwLockReadGuard;
 use wu::net::Connection;
 
-pub fn send_stats(mut conn: Connection, shared: RwLockReadGuard<'_, SharedData>, name: String) {
+pub fn send_stats(mut conn: Connection, shared: &SharedData, name: String) {
     {
         // add statistics to map
         let mut stats = shared.statistics_mut();

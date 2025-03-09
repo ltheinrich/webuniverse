@@ -4,16 +4,16 @@ pub mod server;
 
 mod handlers;
 
-use crate::common::*;
+use crate::get_share;
 use std::net::TcpListener;
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 use std::thread;
 use wu::crypto::init_aead;
 use wu::net::ConnBuilder;
 use wu::{Fail, Result};
 
 /// Listen for clients
-pub fn listen_clients(addr: &str, api_key: &str, shared: Arc<RwLock<SharedData>>) -> Result<()> {
+pub fn listen_clients(addr: &str, api_key: &str) -> Result<()> {
     // listen
     let listener = TcpListener::bind(addr).or_else(Fail::from)?;
     let aead = Arc::new(init_aead(api_key));
@@ -24,7 +24,6 @@ pub fn listen_clients(addr: &str, api_key: &str, shared: Arc<RwLock<SharedData>>
         if let Ok((stream, _)) = listener.accept() {
             // clone
             let aead = aead.clone();
-            let shared = shared.clone();
 
             thread::spawn(move || {
                 // accept connection
@@ -34,8 +33,8 @@ pub fn listen_clients(addr: &str, api_key: &str, shared: Arc<RwLock<SharedData>>
 
                 // handle
                 match htype.as_str() {
-                    "add-server" => handlers::add_server(conn, shared.read().unwrap(), name),
-                    "send-stats" => handlers::send_stats(conn, shared.read().unwrap(), name),
+                    "add-server" => handlers::add_server(conn, get_share(), name),
+                    "send-stats" => handlers::send_stats(conn, get_share(), name),
                     _ => {}
                 }
             });

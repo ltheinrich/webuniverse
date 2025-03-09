@@ -3,11 +3,10 @@
 use crate::common::*;
 use crate::SharedData;
 use kern::http::server::HttpRequest;
-use std::sync::RwLockReadGuard;
 use wu::{Fail, Result};
 
 /// User deletion handler
-pub fn delete(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
+pub fn delete(req: HttpRequest, shared: &SharedData) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -31,7 +30,7 @@ pub fn delete(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
 }
 
 /// Account creation handler
-pub fn create(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
+pub fn create(req: HttpRequest, shared: &SharedData) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -62,7 +61,7 @@ pub fn create(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
 }
 
 /// Account list handler
-pub fn list(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
+pub fn list(req: HttpRequest, shared: &SharedData) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -82,7 +81,7 @@ pub fn list(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result
 }
 
 /// Change user handler
-pub fn change(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
+pub fn change(req: HttpRequest, shared: &SharedData) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;

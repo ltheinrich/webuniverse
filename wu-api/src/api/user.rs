@@ -3,13 +3,12 @@
 use crate::common::*;
 use crate::SharedData;
 use kern::http::server::HttpRequest;
-use std::sync::RwLockReadGuard;
 use wu::crypto::argon2_verify;
 use wu::crypto::hash;
 use wu::{Fail, Result};
 
 /// Token validation handler
-pub fn valid(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
+pub fn valid(req: HttpRequest, shared: &SharedData) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -22,7 +21,7 @@ pub fn valid(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resul
 }
 
 /// Account logout handler
-pub fn logout(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
+pub fn logout(req: HttpRequest, shared: &SharedData) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -42,7 +41,7 @@ pub fn logout(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
 }
 
 /// Account deletion handler
-pub fn delete(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
+pub fn delete(req: HttpRequest, shared: &SharedData) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -65,7 +64,7 @@ pub fn delete(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resu
 }
 
 /// Login handler
-pub fn login(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
+pub fn login(req: HttpRequest, shared: &SharedData) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;
@@ -84,7 +83,7 @@ pub fn login(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Resul
 }
 
 /// Update user handler
-pub fn update(req: HttpRequest, shared: RwLockReadGuard<'_, SharedData>) -> Result<Vec<u8>> {
+pub fn update(req: HttpRequest, shared: &SharedData) -> Result<Vec<u8>> {
     // get values
     let headers = req.headers();
     let username = get_username(headers)?;

@@ -2,10 +2,9 @@
 
 use crate::client_api::server::ServerBuilder;
 use crate::common::*;
-use std::sync::RwLockReadGuard;
 use wu::net::Connection;
 
-pub fn add_server(conn: Connection, shared: RwLockReadGuard<'_, SharedData>, name: String) {
+pub fn add_server(conn: Connection, shared: &SharedData, name: String) {
     // build server
     let (server, mut manager) = ServerBuilder::new(conn).build();
 

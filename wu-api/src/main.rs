@@ -15,15 +15,23 @@ pub use common::*;
 use data::StorageFile;
 use kern::http::server::{load_certificate, HttpRequest, HttpServerBuilder};
 use mysql::Pool;
+use rustls::ServerConfig;
 use std::env::args;
 use std::fs::create_dir;
-use std::sync::{Arc, RwLock};
+use std::sync::{Arc, OnceLock};
 use wu::crypto::{argon2_hash, hash_password};
 use wu::crypto::{random, random_an};
+use wu::http::server::HttpSettings;
 use wu::{
     meta::{init_name, init_version},
     CliBuilder, Result,
 };
+
+static SHARED: OnceLock<SharedData> = OnceLock::new();
+
+pub fn get_share() -> &'static SharedData {
+    SHARED.get().unwrap()
+}
 
 fn main() {
     // print version
@@ -50,6 +58,7 @@ fn main() {
     let data = cmd.parameter("data", "data".to_string());
     let cert = cmd.parameter("cert", format!("{}/cert.pem", &data));
     let key = cmd.parameter("key", format!("{}/key.pem", &data));
+    TLS_PATHS.set((cert, key)).unwrap();
     let mysql_addr = cmd.param("mysql-addr", "localhost");
     let mysql_port = cmd.parameter("mysql-port", 3306);
     let mysql_db = cmd.param("mysql-db", "webuniverse");
@@ -82,27 +91,35 @@ fn main() {
     let mysql_pool = Pool::new(mysql_opts).unwrap();
 
     // shared data
-    let shared = Arc::new(RwLock::new(SharedData::new(users, data, mysql_pool)));
+    let shared = SharedData::new(users, data, mysql_pool);
+    SHARED.set(shared).map_err(|_| 0).unwrap();
 
     // start HTTPS server
-    let tls_config = load_certificate(&cert, &key).unwrap();
+    let settings = HttpSettings::new().threads_num(threads);
     HttpServerBuilder::new()
         .addr(format!("{addr}:{port}"))
-        .threads(threads)
+        .settings(settings)
         .tls_on(tls_config)
         .handler(handle)
-        .build(shared.clone())
+        .build()
         .unwrap();
 
     // print info message
     println!("HTTPS server available on {addr}:{port}");
 
     // client api
-    listen_clients(&format!("{api_addr}:{api_port}"), &api_key, shared).unwrap();
+    listen_clients(&format!("{api_addr}:{api_port}"), &api_key).unwrap();
+}
+
+static TLS_PATHS: OnceLock<(String, String)> = OnceLock::new();
+
+fn tls_config() -> Arc<ServerConfig> {
+    let (cert, key) = TLS_PATHS.get().unwrap();
+    Arc::new(load_certificate(cert, key).unwrap())
 }
 
 /// Assigning requests to handlers
-fn handle(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>> {
+fn handle(req: HttpRequest) -> Result<Vec<u8>> {
     // match url
     let handler = match req.url() {
         // user
@@ -129,7 +146,7 @@ fn handle(req: HttpRequest, shared: Arc<RwLock<SharedData>>) -> Result<Vec<u8>> 
     };
 
     // handle request
-    Ok(match handler(req, shared.read().unwrap()) {
+    Ok(match handler(req, get_share()) {
         Ok(resp) => resp,
         Err(err) => json_error(err),
     })
