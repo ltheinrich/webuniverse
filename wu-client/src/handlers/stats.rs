@@ -2,8 +2,8 @@
 
 use crate::utils::cpu_mem_usage;
 use std::time::Duration;
-use wu::net::Connection;
 use wu::Command;
+use wu::net::Connection;
 
 pub fn send_stats(mut conn: Connection, _cmd: Command) {
     let (rx, _) = cpu_mem_usage(Duration::from_secs(5));

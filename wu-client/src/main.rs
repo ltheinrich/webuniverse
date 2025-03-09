@@ -9,11 +9,11 @@ mod utils;
 use common::*;
 use std::env::args;
 use std::net::TcpStream;
+use wu::CliBuilder;
 use wu::crypto::init_aead;
 use wu::crypto::random_an;
 use wu::meta::{init_name, init_version};
 use wu::net::ConnBuilder;
-use wu::CliBuilder;
 
 fn main() {
     // print version

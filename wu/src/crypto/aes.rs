@@ -1,13 +1,13 @@
 //! AES256-GCM encryption/decryption
 
 use crate::{Fail, Result};
+pub use aes_gcm::Aes256Gcm;
 use aes_gcm::aead::generic_array::{
+    GenericArray,
     typenum::bit::{B0, B1},
     typenum::uint::{UInt, UTerm},
-    GenericArray,
 };
 use aes_gcm::aead::{Aead, KeyInit};
-pub use aes_gcm::Aes256Gcm;
 
 /// AES 256-bit key
 pub type Aes256Key =

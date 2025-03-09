@@ -13,7 +13,7 @@ mod utils;
 use client_api::listen_clients;
 pub use common::*;
 use data::StorageFile;
-use kern::http::server::{load_certificate, HttpRequest, HttpServerBuilder};
+use kern::http::server::{HttpRequest, HttpServerBuilder, load_certificate};
 use mysql::Pool;
 use rustls::ServerConfig;
 use std::env::args;
@@ -23,8 +23,8 @@ use wu::crypto::{argon2_hash, hash_password};
 use wu::crypto::{random, random_an};
 use wu::http::server::HttpSettings;
 use wu::{
-    meta::{init_name, init_version},
     CliBuilder, Result,
+    meta::{init_name, init_version},
 };
 
 static SHARED: OnceLock<SharedData> = OnceLock::new();

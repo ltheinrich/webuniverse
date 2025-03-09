@@ -1,7 +1,7 @@
 //! Users API handling
 
-use crate::common::*;
 use crate::SharedData;
+use crate::common::*;
 use kern::http::server::HttpRequest;
 use wu::{Fail, Result};
 

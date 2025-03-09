@@ -1,7 +1,7 @@
 //! API utils
 
 use jzon::JsonValue;
-use kern::http::server::{respond, ResponseData};
+use kern::http::server::{ResponseData, respond};
 use std::collections::HashMap;
 use std::fmt::Display;
 use std::str::FromStr;

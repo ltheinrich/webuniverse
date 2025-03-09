@@ -4,8 +4,8 @@ use std::fs::OpenOptions;
 use std::io::prelude::*;
 use std::process::Command;
 use std::result::Result as StdResult;
-use std::sync::mpsc::{channel, Receiver};
-use std::thread::{sleep, spawn, JoinHandle};
+use std::sync::mpsc::{Receiver, channel};
+use std::thread::{JoinHandle, sleep, spawn};
 use std::time::Duration;
 use wu::{Fail, Result};
 

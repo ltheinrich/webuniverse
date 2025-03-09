@@ -1,16 +1,16 @@
 //! Add server handler
 
-use std::io::prelude::*;
 use std::io::BufReader;
+use std::io::prelude::*;
 use std::net::TcpListener;
 use std::process::{Command as Process, Stdio};
 use std::sync::{Arc, RwLock};
 use std::thread;
 use std::thread::sleep;
 use std::time::Duration;
-use wu::net::{ConnBuilder, Connection};
 use wu::Command;
 use wu::Fail;
+use wu::net::{ConnBuilder, Connection};
 
 pub fn add_server(mut conn: Connection, cmd: Command, addr: String) {
     // start process

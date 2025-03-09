@@ -1,6 +1,6 @@
 //! Random
 
-use rand::{distr::Alphanumeric, rng, Rng};
+use rand::{Rng, distr::Alphanumeric, rng};
 
 /// Generate random vector
 pub fn random(size: usize) -> Vec<u8> {

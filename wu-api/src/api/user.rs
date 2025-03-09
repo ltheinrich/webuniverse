@@ -1,7 +1,7 @@
 //! User API handlers
 
-use crate::common::*;
 use crate::SharedData;
+use crate::common::*;
 use kern::http::server::HttpRequest;
 use wu::crypto::argon2_verify;
 use wu::crypto::hash;

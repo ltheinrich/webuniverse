@@ -2,9 +2,9 @@
 
 use std::convert::TryInto;
 use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
+use wu::Result;
 use wu::crypto::Aes256Gcm;
 use wu::net::{ConnBuilder, Connection};
-use wu::Result;
 
 /// Server builder
 pub struct ServerBuilder<'a> {

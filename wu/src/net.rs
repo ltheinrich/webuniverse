@@ -1,6 +1,6 @@
 //! Network utils
 
-use crate::crypto::{random, Crypter};
+use crate::crypto::{Crypter, random};
 use aes_gcm::Aes256Gcm;
 use kern::{Fail, Result};
 use std::convert::TryInto;
