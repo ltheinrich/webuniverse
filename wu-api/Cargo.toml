@@ -8,4 +8,4 @@ edition = "2024"
 wu = { path = "../wu" }
 kern = { version = "1.8.3", features = ["tls"] }
 jzon = "0.12.5"
-mysql = "26.0.0"
+mysql = "26.0.1"
