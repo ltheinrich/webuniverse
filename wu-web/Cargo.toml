@@ -8,7 +8,7 @@ edition = "2024"
 wu = { path = "../wu" }
 console_error_panic_hook = "0.1.7"
 getrandom_02 = { package = "getrandom", version = "0.2.16", features = ["js"] }
-getrandom_03 = { package = "getrandom", version = "0.3.3", features = [
+getrandom_03 = { package = "getrandom", version = "0.3.4", features = [
     "wasm_js",
 ] }
 
