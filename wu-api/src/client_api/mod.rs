@@ -16,7 +16,7 @@ use wu::{Fail, Result};
 pub fn listen_clients(addr: &str, api_key: &str) -> Result<()> {
     // listen
     let listener = TcpListener::bind(addr).or_else(Fail::from)?;
-    let aead = Arc::new(init_aead(api_key));
+    let aead = Arc::new(init_aead(api_key)?);
     println!("API server available on {addr}");
 
     loop {

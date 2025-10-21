@@ -2,24 +2,23 @@
 
 use crate::{Fail, Result};
 pub use aes_gcm::Aes256Gcm;
-use aes_gcm::aead::generic_array::{
-    GenericArray,
+use aes_gcm::aead::array::{
+    Array,
     typenum::bit::{B0, B1},
     typenum::uint::{UInt, UTerm},
 };
 use aes_gcm::aead::{Aead, KeyInit};
 
 /// AES 256-bit key
-pub type Aes256Key =
-    GenericArray<u8, UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>>;
+pub type Aes256Key = Array<u8, UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>>;
 
 /// AES 12-byte nonce
-pub type AesNonce = GenericArray<u8, UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>, B0>>;
+pub type AesNonce = Array<u8, UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>, B0>>;
 
 /// Intialize Aes256Gcm with key
-pub fn init_aead(key: impl AsRef<[u8]>) -> Aes256Gcm {
-    let key = GenericArray::clone_from_slice(key.as_ref());
-    Aes256Gcm::new(&key)
+pub fn init_aead(key: impl AsRef<[u8]>) -> Result<Aes256Gcm> {
+    let key = key.as_ref().try_into()?;
+    Ok(Aes256Gcm::new(&key))
 }
 
 /// AES256-GCM encryption/decryption
@@ -30,11 +29,11 @@ pub struct Crypter<'a> {
 
 impl<'a> Crypter<'a> {
     /// Create new crypter from existing aead
-    pub fn new(aead: &'a Aes256Gcm, nonce: impl AsRef<[u8]>) -> Self {
-        Self {
+    pub fn new(aead: &'a Aes256Gcm, nonce: impl AsRef<[u8]>) -> Result<Self> {
+        Ok(Self {
             aead,
-            nonce: GenericArray::clone_from_slice(nonce.as_ref()),
-        }
+            nonce: nonce.as_ref().try_into()?,
+        })
     }
 
     /// Encrypt data

@@ -40,7 +40,7 @@ fn main() {
 
     // connect
     let stream = TcpStream::connect(format!("{api_addr}:{api_port}")).unwrap();
-    let aead = init_aead(api_key);
+    let aead = init_aead(api_key).unwrap();
     let mut conn = ConnBuilder::from(stream, &aead).init().unwrap();
 
     // init connection

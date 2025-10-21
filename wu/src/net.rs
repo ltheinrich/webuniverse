@@ -32,7 +32,7 @@ impl<'a> ConnBuilder<'a> {
         self.stream.write_all(&nonce).or_else(Fail::from)?;
 
         // initiate crypter and return connection
-        let crypt = Crypter::new(self.aead, &nonce);
+        let crypt = Crypter::new(self.aead, &nonce)?;
         Ok(Connection {
             stream: self.stream,
             crypt,
@@ -46,7 +46,7 @@ impl<'a> ConnBuilder<'a> {
         self.stream.read_exact(&mut nonce).or_else(Fail::from)?;
 
         // initiate crypter and return connection
-        let crypt = Crypter::new(self.aead, &nonce);
+        let crypt = Crypter::new(self.aead, &nonce)?;
         Ok(Connection {
             stream: self.stream,
             crypt,
