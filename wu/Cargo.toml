@@ -15,5 +15,5 @@ rand = "0.10.0"
 aes-gcm = "0.11.0-rc.3"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm-bindgen = "0.2.113"
+wasm-bindgen = "0.2.114"
 getrandom = { version = "0.4.1", features = ["wasm_js"] }
