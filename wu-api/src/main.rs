@@ -55,8 +55,8 @@ fn main() {
     let api_key = cmd.parameter("api-key", random_an(32));
     let threads = cmd.parameter("threads", 2);
     let data = cmd.parameter("data", "data".to_string());
-    let cert = cmd.parameter("cert", format!("{}/cert.pem", &data));
-    let key = cmd.parameter("key", format!("{}/key.pem", &data));
+    let cert = cmd.parameter("cert", format!("{}/cert.pem", data));
+    let key = cmd.parameter("key", format!("{}/key.pem", data));
     let mysql_addr = cmd.param("mysql-addr", "localhost");
     let mysql_port = cmd.parameter("mysql-port", 3306);
     let mysql_db = cmd.param("mysql-db", "webuniverse");
@@ -65,7 +65,7 @@ fn main() {
 
     // open users database
     create_dir(&data).ok();
-    let mut users = StorageFile::new(format!("{}/users.wdb", &data)).unwrap();
+    let mut users = StorageFile::new(format!("{}/users.wdb", data)).unwrap();
 
     // create admin:admin user if empty
     if users.cache().is_empty() {
