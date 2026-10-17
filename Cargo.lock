@@ -685,9 +685,9 @@ dependencies = [
 
 [[package]]
 name = "inout"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8c0d789294fb457b791f7797a04478704788f30b407e5d0b01deaa846572d9f"
+checksum = "3ce983bb6fb399067d101fbfc9e74174e07e9f29a2bc679efefeb8c645819c3f"
 dependencies = [
  "hybrid-array",
 ]
@@ -758,9 +758,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.190"
+version = "0.2.191"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
+checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
 
 [[package]]
 name = "libz-sys"
@@ -822,9 +822,9 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
 name = "mysql"
-version = "28.0.3"
+version = "28.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d3d30e2806645e218163f49c2656286061cc91ffce24d93d758fd136e70eb5d"
+checksum = "ca3de8a73b7c70f76dbcdd4b6abc9b53bbb6c4f7bd6c79d8e8a7ea2157c02487"
 dependencies = [
  "arc-swap",
  "bufstream",
@@ -1563,7 +1563,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
